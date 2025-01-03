@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import DeleteIcon from "../icons/DeleteIcon.tsx";
+import CrossIcon from "../icons/CrossIcon.tsx";
 
+// TODO1: Add subtasks
 type TodoItem = {
   id: number;
   text: string;
@@ -24,18 +26,8 @@ const TodoList = () => {
       { id: 1, text: "Read for 10 mins", completed: false, editing: false },
       { id: 2, text: "Exercise for 40 mins", completed: false, editing: false },
       { id: 3, text: "Meditate for 5 mins", completed: false, editing: false },
-      {
-        id: 4,
-        text: "Drink 8 glasses of water",
-        completed: false,
-        editing: false,
-      },
-      {
-        id: 5,
-        text: "Get 7-8 hours of sleep",
-        completed: false,
-        editing: false,
-      },
+      { id: 4, text: "8 glasses of water", completed: false, editing: false },
+      { id: 5, text: "7-8 hours of sleep", completed: false, editing: false },
     ],
     editing: false,
   };
@@ -56,6 +48,10 @@ const TodoList = () => {
       ]);
       setNewListTitle("");
     }
+  };
+
+  const deleteList = (listId: string) => {
+    setLists(lists.filter((list: TodoListType) => list.id !== listId));
   };
 
   const addItem = (listId: string) => {
@@ -151,7 +147,17 @@ const TodoList = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {lists.map((list: TodoListType) => (
           <div key={list.id} className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-bold mb-4">{list.title}</h3>
+            <div className="flex justify-between items-center mb-5">
+              <p className="text-xl font-bold ">{list.title}</p>
+              {list.id !== "default-habits" && (
+                <button
+                  onClick={() => deleteList(list.id)}
+                  className="text-gray-500 focus:outline-none"
+                >
+                  <CrossIcon />
+                </button>
+              )}
+            </div>
             <div className="space-y-3">
               {list.items.map((item: TodoItem) => (
                 <div key={item.id} className="flex items-center gap-3">
@@ -207,7 +213,7 @@ const TodoList = () => {
                       } ${
                         list.id !== "default-habits" ? "cursor-pointer" : ""
                       }`}
-                      onClick={() => {
+                      onDoubleClick={() => {
                         if (list.id !== "default-habits") {
                           setLists(
                             lists.map((l: TodoListType) =>
@@ -234,7 +240,7 @@ const TodoList = () => {
                   {list.id !== "default-habits" && (
                     <button
                       onClick={() => deleteItem(list.id, item.id)}
-                      className="text-gray-500 hover:text-red-500 focus:outline-none"
+                      className="text-gray-500 focus:outline-none"
                     >
                       <DeleteIcon />
                     </button>
