@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import DeleteIcon from "../icons/DeleteIcon.tsx";
-import CrossIcon from "../icons/CrossIcon.tsx";
+import DeleteIcon from "./DeleteIcon.tsx";
+import CrossIcon from "./CrossIcon.tsx";
 
 // TODO1: Add subtasks
-type TodoItem = {
+
+type TodoTask = {
   id: number;
   text: string;
   completed: boolean;
@@ -13,7 +14,7 @@ type TodoItem = {
 type TodoListType = {
   id: string;
   title: string;
-  items: TodoItem[];
+  items: TodoTask[];
   editing: boolean;
 };
 
@@ -54,7 +55,7 @@ const TodoList = () => {
     setLists(lists.filter((list: TodoListType) => list.id !== listId));
   };
 
-  const addItem = (listId: string) => {
+  const addTask = (listId: string) => {
     if (listId === "default-habits") return;
 
     setLists(
@@ -79,7 +80,7 @@ const TodoList = () => {
         list.id === listId
           ? {
               ...list,
-              items: list.items.map((item: TodoItem) =>
+              items: list.items.map((item: TodoTask) =>
                 item.id === itemId
                   ? {
                       ...item,
@@ -101,7 +102,7 @@ const TodoList = () => {
         list.id === listId
           ? {
               ...list,
-              items: list.items.filter((item: TodoItem) => item.id !== itemId),
+              items: list.items.filter((item: TodoTask) => item.id !== itemId),
             }
           : list
       )
@@ -127,6 +128,7 @@ const TodoList = () => {
 
   return (
     <div className="space-y-6">
+      {/* Input for new list title */}
       <div className="flex gap-4">
         <input
           type="text"
@@ -144,6 +146,7 @@ const TodoList = () => {
         </button>
       </div>
 
+      {/* Lists and Tasks */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {lists.map((list: TodoListType) => (
           <div key={list.id} className="bg-white p-6 rounded-lg shadow-lg">
@@ -158,8 +161,10 @@ const TodoList = () => {
                 </button>
               )}
             </div>
+
+            {/* Tasks */}
             <div className="space-y-3">
-              {list.items.map((item: TodoItem) => (
+              {list.items.map((item: TodoTask) => (
                 <div key={item.id} className="flex items-center gap-3">
                   {/* Checkbox to toggle complete */}
                   <input
@@ -248,12 +253,14 @@ const TodoList = () => {
                 </div>
               ))}
             </div>
+
+            {/* Add New Task Button */}
             {list.id !== "default-habits" && (
               <button
-                onClick={() => addItem(list.id)}
+                onClick={() => addTask(list.id)}
                 className="mt-4 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
               >
-                + Add Item
+                + Add Task
               </button>
             )}
           </div>
