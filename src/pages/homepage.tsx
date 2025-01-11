@@ -1,12 +1,12 @@
 import React from "react";
 import TodoList from "../components/TodoList.tsx";
 import QuoteSection from "../components/QuoteSection.tsx";
-import Navbar from "../components/Navbar.tsx";
+import NavBar from "../components/NavBar.tsx";
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <Navbar />
+      <NavBar />
       <div className="h-screen flex items-center justify-center">
         <style>{`
           @keyframes scaleIn {
