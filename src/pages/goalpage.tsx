@@ -484,6 +484,7 @@ const GoalsPage = () => {
         <Modal
           isOpen={isNewGoalModalOpen}
           onClose={() => setIsNewGoalModalOpen(false)}
+          children={<></>}
         >
           <GoalForm
             onSubmit={handleNewGoal}
@@ -497,6 +498,7 @@ const GoalsPage = () => {
             setSelectedGoal(null);
             setIsEditMode(false);
           }}
+          children={<></>}
         >
           {selectedGoal && !isEditMode && (
             <GoalDetails
