@@ -31,6 +31,12 @@ const NavBar = () => {
               Analysis
             </a>
             <a
+              href="/journal"
+              className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:shadow-md"
+            >
+              Journal
+            </a>
+            <a
               href="/settings"
               className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-all hover:shadow-md"
             >

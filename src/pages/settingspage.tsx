@@ -99,25 +99,26 @@ const SettingsPage = () => {
           </div>
         </div>
       ) : (
-        <div className="space-y-4">
-          <div>
+        <div className="space-y-4 flex-row justify-items-start">
+          <div className="justify-items-start">
             <label className="block text-sm font-medium text-gray-700">
               Name
             </label>
             <p className="mt-1 text-gray-900">{userDetails.name}</p>
           </div>
-          <div>
+          <div className="justify-items-start">
             <label className="block text-sm font-medium text-gray-700">
               Occupation
             </label>
             <p className="mt-1 text-gray-900">{userDetails.occupation}</p>
           </div>
-          <div>
+          <div className="justify-items-start">
             <label className="block text-sm font-medium text-gray-700">
               About
             </label>
             <p className="mt-1 text-gray-900">{userDetails.about}</p>
           </div>
+          <br />
           <button
             onClick={() => setIsEditing(true)}
             className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 mt-12"
@@ -172,6 +173,7 @@ const SettingsPage = () => {
             Your password has been updated successfully.
           </p>
         )}
+        <br />
         {!showOtpForm ? (
           <button
             onClick={() => setShowOtpForm(true)}
@@ -221,10 +223,8 @@ const SettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Fixed Navigation Bar */}
       <NavBar />
 
-      {/* Main Content Area with Sidebar */}
       <main className="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           {/* Sidebar */}

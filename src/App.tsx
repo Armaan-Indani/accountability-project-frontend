@@ -6,6 +6,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AuthPage from "./pages/authpage.tsx";
 import ProtectedRoute from "./utils/authenticationGuard.tsx";
 import SettingsPage from "./pages/settingspage.tsx";
+import JournalsPage from "./pages/journalspage.tsx";
+import AnalysisPage from "./pages/analysispage.tsx";
 
 function App() {
   return (
@@ -27,6 +29,16 @@ function App() {
             path="/settings"
             // element={<ProtectedRoute children={<SettingsPage />} />}
             element={<SettingsPage />}
+          />
+          <Route
+            path="/journal"
+            // element={<ProtectedRoute children={<JournalsPage />} />}
+            element={<JournalsPage />}
+          />
+          <Route
+            path="/analysis"
+            // element={<ProtectedRoute children={<JournalsPage />} />}
+            element={<AnalysisPage />}
           />
         </Routes>
       </Router>
