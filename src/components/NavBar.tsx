@@ -6,7 +6,7 @@ const NavBar = () => {
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0">
-            <a href="/" className="flex items-center">
+            <a href="/home" className="flex items-center">
               <div className="h-8 w-8 bg-indigo-600 rounded-full shadow-lg"></div>
               <span className="ml-2 text-xl font-bold text-gray-800">Logo</span>
             </a>

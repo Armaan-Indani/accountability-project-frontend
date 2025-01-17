@@ -14,11 +14,13 @@ function App() {
           <Route path="/" element={<AuthPage />} />
           <Route
             path="/home"
-            element={<ProtectedRoute children={<HomePage />} />}
+            // element={<ProtectedRoute children={<HomePage />} />}
+            element={<HomePage />}
           />
           <Route
             path="/goals"
-            element={<ProtectedRoute children={<GoalsPage />} />}
+            // element={<ProtectedRoute children={<GoalsPage />} />}
+            element={<GoalsPage />}
           />
         </Routes>
       </Router>
