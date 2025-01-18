@@ -161,8 +161,8 @@ const SettingsPage = () => {
   const renderPrivacySecurity = () => (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Privacy & Security</h2>
-      <div className="space-y-4">
-        <div>
+      <div className="space-y-4 justify-items-start">
+        <div className="justify-items-start">
           <label className="block text-sm font-medium text-gray-700">
             Email
           </label>
