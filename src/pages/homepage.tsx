@@ -2,12 +2,13 @@ import React from "react";
 import TodoList from "../components/TodoList.tsx";
 import QuoteSection from "../components/QuoteSection.tsx";
 import NavBar from "../components/NavBar.tsx";
+import Calendar from "../components/Calendar.tsx";
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <NavBar />
-      <div className="h-screen flex items-center justify-center">
+      <div className="h-screen flex items-center justify-evenly">
         <style>{`
           @keyframes scaleIn {
             0% {
@@ -21,6 +22,9 @@ const HomePage = () => {
           }
         `}</style>
         <QuoteSection />
+        <div>
+          <Calendar />
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
