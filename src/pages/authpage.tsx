@@ -30,7 +30,7 @@ export default function AuthPage() {
           localStorage.setItem("token", response.data.data);
 
           // Optionally redirect the user to the dashboard or other page
-          console.log("Login successful!");
+          console.log("Login successful!, token is: ", response.data.data);
           window.location.href = "/home";
         } else {
           console.log("Registration successful! Please log in.");

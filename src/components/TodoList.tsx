@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import DeleteIcon from "./DeleteIcon.tsx";
 import CrossIcon from "./CrossIcon.tsx";
+
+const BASE_URL = "http://localhost:5000";
 
 // TODO1: Add subtasks
 
@@ -35,6 +38,44 @@ const TodoList = () => {
 
   const [lists, setLists] = useState<TodoListType[]>([defaultHabits]);
   const [newListTitle, setNewListTitle] = useState("");
+
+  useEffect(() => {
+    const fetchLists = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token == null) {
+          throw new Error("Token not found");
+        }
+        console.log("Token: ", token);
+        const response = await axios.get(`${BASE_URL}/api/task/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
+
+        if (response.data.status === "success") {
+          setLists(
+            response.data.data.map((list: any) => ({
+              id: list.id.toString(),
+              title: list.name,
+              items: list.Tasks.map((task: any) => ({
+                id: task.id,
+                text: task.text,
+                completed: false,
+                editing: false,
+              })),
+              editing: false,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching lists:", error);
+      }
+    };
+
+    fetchLists();
+  }, []);
 
   const addNewList = () => {
     if (newListTitle.trim()) {
