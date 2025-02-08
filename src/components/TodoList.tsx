@@ -46,7 +46,6 @@ const TodoList = () => {
         if (token == null) {
           throw new Error("Token not found");
         }
-        console.log("Token: ", token);
         const response = await axios.get(`${BASE_URL}/api/task/`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,18 +76,47 @@ const TodoList = () => {
     fetchLists();
   }, []);
 
-  const addNewList = () => {
-    if (newListTitle.trim()) {
-      setLists([
-        ...lists,
-        {
-          id: Date.now().toString(),
-          title: newListTitle,
-          items: [],
-          editing: false,
-        },
-      ]);
-      setNewListTitle("");
+  // const addNewList = () => {
+  //   if (newListTitle.trim()) {
+  //     setLists([
+  //       ...lists,
+  //       {
+  //         id: Date.now().toString(),
+  //         title: newListTitle,
+  //         items: [],
+  //         editing: false,
+  //       },
+  //     ]);
+  //     setNewListTitle("");
+  //   }
+  // };
+
+  const addNewList = async () => {
+    if (!newListTitle.trim()) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const response = await axios.post(
+        `${BASE_URL}/api/task/`,
+        { name: newListTitle },
+        { withCredentials: true },
+      );
+
+      if (response.data.status === "success") {
+        setLists([
+          ...lists,
+          {
+            id: response.data.data.id.toString(),
+            title: newListTitle,
+            items: [],
+            editing: false,
+          },
+        ]);
+        setNewListTitle("");
+      }
+    } catch (error) {
+      console.error("Error creating list:", error);
     }
   };
 
