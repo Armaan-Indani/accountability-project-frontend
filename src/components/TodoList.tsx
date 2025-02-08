@@ -39,6 +39,7 @@ const TodoList = () => {
   const [lists, setLists] = useState<TodoListType[]>([defaultHabits]);
   const [newListTitle, setNewListTitle] = useState("");
 
+  //Fetching Lists
   useEffect(() => {
     const fetchLists = async () => {
       try {
@@ -56,12 +57,12 @@ const TodoList = () => {
         if (response.data.status === "success") {
           setLists(
             response.data.data.map((list: any) => ({
-              id: list.id.toString(),
+              id: list.ID.toString(),
               title: list.name,
-              items: list.Tasks.map((task: any) => ({
-                id: task.id,
+              items: list.tasks.map((task: any) => ({
+                id: task.ID,
                 text: task.text,
-                completed: false,
+                completed: task.completed,
                 editing: false,
               })),
               editing: false,
@@ -75,21 +76,6 @@ const TodoList = () => {
 
     fetchLists();
   }, []);
-
-  // const addNewList = () => {
-  //   if (newListTitle.trim()) {
-  //     setLists([
-  //       ...lists,
-  //       {
-  //         id: Date.now().toString(),
-  //         title: newListTitle,
-  //         items: [],
-  //         editing: false,
-  //       },
-  //     ]);
-  //     setNewListTitle("");
-  //   }
-  // };
 
   const addNewList = async () => {
     if (!newListTitle.trim()) return;
