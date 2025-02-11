@@ -3,7 +3,7 @@ import axios from "axios";
 import DeleteIcon from "./DeleteIcon.tsx";
 import CrossIcon from "./CrossIcon.tsx";
 
-const BASE_URL = "http://localhost:5000";
+const BACKEND_URL = "http://localhost:5000";
 
 // TODO1: Add subtasks
 
@@ -22,21 +22,7 @@ type TodoListType = {
 };
 
 const TodoList = () => {
-  // Define the default habits list
-  const defaultHabits: TodoListType = {
-    id: "default-habits",
-    title: "Daily Habits",
-    items: [
-      { id: 1, text: "Read for 10 mins", completed: false, editing: false },
-      { id: 2, text: "Exercise for 40 mins", completed: false, editing: false },
-      { id: 3, text: "Meditate for 5 mins", completed: false, editing: false },
-      { id: 4, text: "8 glasses of water", completed: false, editing: false },
-      { id: 5, text: "7-8 hours of sleep", completed: false, editing: false },
-    ],
-    editing: false,
-  };
-
-  const [lists, setLists] = useState<TodoListType[]>([defaultHabits]);
+  const [lists, setLists] = useState<TodoListType[]>([]);
   const [newListTitle, setNewListTitle] = useState("");
 
   //Fetching Lists
@@ -47,7 +33,7 @@ const TodoList = () => {
         if (token == null) {
           throw new Error("Token not found");
         }
-        const response = await axios.get(`${BASE_URL}/api/task/`, {
+        const response = await axios.get(`${BACKEND_URL}/api/tasklist/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -84,7 +70,7 @@ const TodoList = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
       const response = await axios.post(
-        `${BASE_URL}/api/task/`,
+        `${BACKEND_URL}/api/tasklist/`,
         { name: newListTitle },
         {
           withCredentials: true,
@@ -111,19 +97,18 @@ const TodoList = () => {
     }
   };
 
-  // const deleteList = (listId: string) => {
-  //   setLists(lists.filter((list: TodoListType) => list.id !== listId));
-  // };
-
   const deleteList = async (listId: string) => {
     try {
       // Send DELETE request to the backend
-      const response = await axios.delete(`${BASE_URL}/api/task/${listId}`, {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.delete(
+        `${BACKEND_URL}/api/tasklist/${listId}`,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (response.data.status === "success") {
         // Remove the list from the state if deletion is successful
@@ -136,75 +121,193 @@ const TodoList = () => {
     }
   };
 
-  const addTask = (listId: string) => {
+  const addTask = async (listId: string) => {
     if (listId === "default-habits") return;
 
-    setLists(
-      lists.map((list: TodoListType) =>
-        list.id === listId
-          ? {
-              ...list,
-              items: [
-                ...list.items,
-                { id: Date.now(), text: "", completed: false, editing: true },
-              ],
-            }
-          : list
-      )
-    );
+    const newTaskText = prompt("Enter task text:");
+    if (!newTaskText) return;
+
+    try {
+      // Retrieve token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token not found");
+      }
+
+      // Send request to backend to create task
+      const response = await axios.post(
+        `${BACKEND_URL}/api/task/${listId}`,
+        { text: newTaskText },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.status === "success") {
+        const newTask = {
+          id: response.data.data.ID,
+          text: newTaskText,
+          completed: false,
+          editing: false,
+        };
+
+        // Update state with new task
+        setLists((prevLists) =>
+          prevLists.map((list) =>
+            list.id === listId
+              ? { ...list, items: [...list.items, newTask] }
+              : list
+          )
+        );
+      } else {
+        console.error("Error adding task:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding task:", error.message || error);
+    }
   };
 
-  const updateItem = (listId: string, itemId: number, newText: string) => {
+  const updateItem = async (
+    listId: string,
+    itemId: number,
+    newText: string
+  ) => {
+    if (listId === "default-habits" || newText.trim() === "") return;
+
+    try {
+      // Retrieve token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token not found");
+      }
+
+      // Send PATCH request to backend
+      const response = await axios.patch(
+        `${BACKEND_URL}/api/task/${itemId}`,
+        { text: newText.trim() },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.status === "success") {
+        // Update state only if request succeeds
+        setLists((prevLists) =>
+          prevLists.map((list) =>
+            list.id === listId
+              ? {
+                  ...list,
+                  items: list.items.map((item) =>
+                    item.id === itemId
+                      ? { ...item, text: newText.trim(), editing: false }
+                      : item
+                  ),
+                }
+              : list
+          )
+        );
+      } else {
+        console.error("Error updating task:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating task:", error.message || error);
+    }
+  };
+
+  const deleteItem = async (listId: string, itemId: number) => {
     if (listId === "default-habits") return;
-    setLists(
-      lists.map((list: TodoListType) =>
-        list.id === listId
-          ? {
-              ...list,
-              items: list.items.map((item: TodoTask) =>
-                item.id === itemId
-                  ? {
-                      ...item,
-                      text: newText.trim() !== "" ? newText : item.text,
-                      editing: false,
-                    }
-                  : item
-              ),
-            }
-          : list
-      )
-    );
+
+    try {
+      // Retrieve token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token not found");
+      }
+
+      // Send DELETE request to backend with correct route
+      const response = await axios.delete(`${BACKEND_URL}/api/task/${itemId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+      if (response.data.status === "success") {
+        // Remove the task from the UI
+        setLists((prevLists) =>
+          prevLists.map((list) =>
+            list.id === listId
+              ? {
+                  ...list,
+                  items: list.items.filter((item) => item.id !== itemId),
+                }
+              : list
+          )
+        );
+      } else {
+        console.error("Error deleting task:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting task:", error.message || error);
+    }
   };
 
-  const deleteItem = (listId: string, itemId: number) => {
-    if (listId === "default-habits") return;
-    setLists(
-      lists.map((list: TodoListType) =>
-        list.id === listId
-          ? {
-              ...list,
-              items: list.items.filter((item: TodoTask) => item.id !== itemId),
-            }
-          : list
-      )
-    );
-  };
+  const toggleComplete = async (listId: string, itemId: number) => {
+    try {
+      // Retrieve token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Token not found");
+      }
 
-  const toggleComplete = (listId: string, itemId: number) => {
-    setLists(
-      lists.map((list) =>
-        list.id === listId
-          ? {
-              ...list,
-              items: list.items.map((item) =>
-                item.id === itemId
-                  ? { ...item, completed: !item.completed }
-                  : item
-              ),
-            }
-          : list
-      )
-    );
+      // Find the task's current completion status
+      const list = lists.find((l) => l.id === listId);
+      if (!list) return;
+      const task = list.items.find((item) => item.id === itemId);
+      if (!task) return;
+
+      const newCompletedStatus = !task.completed;
+
+      // Send PATCH request to backend
+      const response = await axios.patch(
+        `${BACKEND_URL}/api/task/${itemId}/toggle`,
+        { completed: newCompletedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.status === "success") {
+        // Update state with new completion status
+        setLists((prevLists) =>
+          prevLists.map((list) =>
+            list.id === listId
+              ? {
+                  ...list,
+                  items: list.items.map((item) =>
+                    item.id === itemId
+                      ? { ...item, completed: newCompletedStatus }
+                      : item
+                  ),
+                }
+              : list
+          )
+        );
+      } else {
+        console.error("Error toggling task status:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error toggling task status:", error.message || error);
+    }
   };
 
   return (
