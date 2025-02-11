@@ -86,14 +86,19 @@ const TodoList = () => {
       const response = await axios.post(
         `${BASE_URL}/api/task/`,
         { name: newListTitle },
-        { withCredentials: true },
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (response.data.status === "success") {
         setLists([
           ...lists,
           {
-            id: response.data.data.id.toString(),
+            id: response.data.data.ID.toString(),
             title: newListTitle,
             items: [],
             editing: false,
@@ -106,8 +111,29 @@ const TodoList = () => {
     }
   };
 
-  const deleteList = (listId: string) => {
-    setLists(lists.filter((list: TodoListType) => list.id !== listId));
+  // const deleteList = (listId: string) => {
+  //   setLists(lists.filter((list: TodoListType) => list.id !== listId));
+  // };
+
+  const deleteList = async (listId: string) => {
+    try {
+      // Send DELETE request to the backend
+      const response = await axios.delete(`${BASE_URL}/api/task/${listId}`, {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.data.status === "success") {
+        // Remove the list from the state if deletion is successful
+        setLists(lists.filter((list: TodoListType) => list.id !== listId));
+      } else {
+        console.error("Error deleting list:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting list:", error);
+    }
   };
 
   const addTask = (listId: string) => {
