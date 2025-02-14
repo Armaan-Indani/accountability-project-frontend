@@ -311,31 +311,34 @@ const TodoList = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4 sm:px-6 lg:px-8">
       {/* Input for new list title */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <input
           type="text"
           value={newListTitle}
           onChange={(e) => setNewListTitle(e.target.value)}
           placeholder="Enter list title..."
-          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:max-w-md lg:max-w-none"
           onKeyDown={(e) => e.key === "Enter" && addNewList()}
         />
         <button
           onClick={addNewList}
-          className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors w-full sm:w-auto"
         >
           Add List
         </button>
       </div>
 
       {/* Lists and Tasks */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {lists.map((list: TodoListType) => (
-          <div key={list.id} className="bg-white p-6 rounded-lg shadow-lg">
+          <div
+            key={list.id}
+            className="bg-white p-6 rounded-lg shadow-lg w-full"
+          >
             <div className="flex justify-between items-center mb-5">
-              <p className="text-xl font-bold ">{list.title}</p>
+              <p className="text-xl font-bold break-words">{list.title}</p>
               {list.id !== "default-habits" && (
                 <button
                   onClick={() => deleteList(list.id)}
@@ -381,7 +384,7 @@ const TodoList = () => {
                         );
                       }}
                       placeholder="Enter task..."
-                      className="flex-1 px-2 py-1 border rounded"
+                      className="flex-1 px-2 py-2 border rounded w-full sm:max-w-md lg:max-w-lg"
                       onBlur={(e) =>
                         e.target.value.trim() !== ""
                           ? updateItem(list.id, item.id, e.target.value)
@@ -397,7 +400,7 @@ const TodoList = () => {
                   ) : (
                     /* Display task text */
                     <span
-                      className={`flex-1 text-left ${
+                      className={`flex-1 break-words text-left ${
                         item.completed ? "line-through text-gray-400" : ""
                       } ${
                         list.id !== "default-habits" ? "cursor-pointer" : ""
@@ -442,7 +445,7 @@ const TodoList = () => {
             {list.id !== "default-habits" && (
               <button
                 onClick={() => addTask(list.id)}
-                className="mt-4 px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                className="mt-4 w-full sm:w-auto px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
               >
                 + Add Task
               </button>

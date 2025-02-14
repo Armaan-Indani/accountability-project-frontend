@@ -8,7 +8,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <NavBar />
-      <div className="h-screen flex items-center justify-evenly">
+      <div className="h-screen flex flex-col md:flex-row items-center justify-evenly p-4 md:p-0">
         <style>{`
           @keyframes scaleIn {
             0% {
@@ -22,9 +22,6 @@ const HomePage = () => {
           }
         `}</style>
         <QuoteSection />
-        <div>
-          <Calendar />
-        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
