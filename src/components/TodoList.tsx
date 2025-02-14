@@ -25,14 +25,19 @@ const TodoList = () => {
   const [lists, setLists] = useState<TodoListType[]>([]);
   const [newListTitle, setNewListTitle] = useState("");
 
+  const fetchToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Token not found");
+    }
+    return token;
+  };
+
   //Fetching Lists
   useEffect(() => {
     const fetchLists = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (token == null) {
-          throw new Error("Token not found");
-        }
+        const token = fetchToken();
         const response = await axios.get(`${BACKEND_URL}/api/tasklist/`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -67,8 +72,7 @@ const TodoList = () => {
     if (!newListTitle.trim()) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+      const token = fetchToken();
       const response = await axios.post(
         `${BACKEND_URL}/api/tasklist/`,
         { name: newListTitle },
@@ -99,19 +103,18 @@ const TodoList = () => {
 
   const deleteList = async (listId: string) => {
     try {
-      // Send DELETE request to the backend
+      const token = fetchToken();
       const response = await axios.delete(
         `${BACKEND_URL}/api/tasklist/${listId}`,
         {
           withCredentials: true,
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       if (response.data.status === "success") {
-        // Remove the list from the state if deletion is successful
         setLists(lists.filter((list: TodoListType) => list.id !== listId));
       } else {
         console.error("Error deleting list:", response.data.message);
@@ -128,13 +131,7 @@ const TodoList = () => {
     if (!newTaskText) return;
 
     try {
-      // Retrieve token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found");
-      }
-
-      // Send request to backend to create task
+      const token = fetchToken();
       const response = await axios.post(
         `${BACKEND_URL}/api/task/${listId}`,
         { text: newTaskText },
@@ -154,7 +151,6 @@ const TodoList = () => {
           editing: false,
         };
 
-        // Update state with new task
         setLists((prevLists) =>
           prevLists.map((list) =>
             list.id === listId
@@ -178,13 +174,7 @@ const TodoList = () => {
     if (listId === "default-habits" || newText.trim() === "") return;
 
     try {
-      // Retrieve token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found");
-      }
-
-      // Send PATCH request to backend
+      const token = fetchToken();
       const response = await axios.patch(
         `${BACKEND_URL}/api/task/${itemId}`,
         { text: newText.trim() },
@@ -197,7 +187,6 @@ const TodoList = () => {
       );
 
       if (response.data.status === "success") {
-        // Update state only if request succeeds
         setLists((prevLists) =>
           prevLists.map((list) =>
             list.id === listId
@@ -224,13 +213,7 @@ const TodoList = () => {
     if (listId === "default-habits") return;
 
     try {
-      // Retrieve token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found");
-      }
-
-      // Send DELETE request to backend with correct route
+      const token = fetchToken();
       const response = await axios.delete(`${BACKEND_URL}/api/task/${itemId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -239,7 +222,6 @@ const TodoList = () => {
       });
 
       if (response.data.status === "success") {
-        // Remove the task from the UI
         setLists((prevLists) =>
           prevLists.map((list) =>
             list.id === listId
@@ -260,13 +242,7 @@ const TodoList = () => {
 
   const toggleComplete = async (listId: string, itemId: number) => {
     try {
-      // Retrieve token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Token not found");
-      }
-
-      // Find the task's current completion status
+      const token = fetchToken();
       const list = lists.find((l) => l.id === listId);
       if (!list) return;
       const task = list.items.find((item) => item.id === itemId);
@@ -274,7 +250,6 @@ const TodoList = () => {
 
       const newCompletedStatus = !task.completed;
 
-      // Send PATCH request to backend
       const response = await axios.patch(
         `${BACKEND_URL}/api/task/${itemId}/toggle`,
         { completed: newCompletedStatus },
@@ -287,7 +262,6 @@ const TodoList = () => {
       );
 
       if (response.data.status === "success") {
-        // Update state with new completion status
         setLists((prevLists) =>
           prevLists.map((list) =>
             list.id === listId
