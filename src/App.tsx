@@ -8,6 +8,7 @@ import ProtectedRoute from "./utils/authenticationGuard.tsx";
 import SettingsPage from "./pages/settingspage.tsx";
 import JournalsPage from "./pages/journalspage.tsx";
 import AnalysisPage from "./pages/analysispage.tsx";
+import GoalManagementApp from "./pages/goalspage3.tsx";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
           <Route
             path="/goals"
             // element={<ProtectedRoute children={<GoalsPage />} />}
-            element={<GoalsPage />}
+            // element={<GoalsPage />}
+            element={<GoalManagementApp />}
           />
           <Route
             path="/settings"
