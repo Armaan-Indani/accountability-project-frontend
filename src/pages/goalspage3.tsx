@@ -215,13 +215,13 @@ const GoalManagementApp = () => {
     <div>
       <NavBar />
       <div className="p-6 max-w-6xl mx-auto">
-        <div className="flex justify-between mb-6">
-          <h1 className="text-2xl font-bold">Goal Management</h1>
+        <div className="flex flex-col md:flex-row justify-between mb-6">
+          <h1 className="text-2xl font-bold mb-4 md:mb-0">Goal Management</h1>
           <Button onClick={() => setShowAddGoal(true)}>Add New Goal</Button>
         </div>
 
         <Dialog open={showAddGoal}>
-          <DialogContent className="max-w-[80vw] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-[90vw] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex justify-between items-center">
                 <DialogTitle>
@@ -231,7 +231,7 @@ const GoalManagementApp = () => {
               </div>
             </DialogHeader>
 
-            <div className="flex gap-4 mb-4">
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
               <Input
                 placeholder="Goal Name"
                 value={newGoal.name}
@@ -251,7 +251,7 @@ const GoalManagementApp = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
@@ -329,10 +329,9 @@ const GoalManagementApp = () => {
                   </div>
                 </div>
 
-
                 <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold">Description</h3>
-                  </div>
+                  <h3 className="font-semibold">Description</h3>
+                </div>
                 <Textarea
                   placeholder="Describe your goal..."
                   value={newGoal.description}
@@ -469,7 +468,7 @@ const GoalManagementApp = () => {
               <div className="space-y-4">
                 {selectedGoal?.what && (
                   <div>
-                    <h4 className="text-sm font-semibold w-max">
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
                       What, Why, Who, Where, Which?
                     </h4>
                     <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
@@ -480,7 +479,7 @@ const GoalManagementApp = () => {
 
                 {selectedGoal?.howMuch && (
                   <div>
-                    <h4 className="text-sm font-semibold w-max">
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
                       How much, How many?
                     </h4>
                     <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
@@ -491,7 +490,7 @@ const GoalManagementApp = () => {
 
                 {selectedGoal?.resources && (
                   <div>
-                    <h4 className="text-sm font-semibold w-max">
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
                       Resources and Skills
                     </h4>
                     <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
@@ -502,7 +501,7 @@ const GoalManagementApp = () => {
 
                 {selectedGoal?.alignment && (
                   <div>
-                    <h4 className="text-sm font-semibold w-max">
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
                       Alignment with long term aim/plan
                     </h4>
                     <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
