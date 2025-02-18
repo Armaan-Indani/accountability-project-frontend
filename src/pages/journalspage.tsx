@@ -149,7 +149,7 @@ const JournalsPage = () => {
                 </button>
               </div>
             </div>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1 text-right">
               Created: {journal.createdAt}
             </p>
           </div>
@@ -189,7 +189,7 @@ const JournalsPage = () => {
                 </button>
               </div>
             </div>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1 text-right">
               Created: {journal.createdAt}
             </p>
           </div>
@@ -214,9 +214,9 @@ const JournalsPage = () => {
 
       {/* Main Content Area with Sidebar */}
       <main className="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <div className="w-56 bg-white shadow-sm rounded-lg p-4">
+          <div className="w-full lg:w-56 bg-white shadow-sm rounded-lg p-4">
             <nav className="space-y-2">
               {["My Journals", "Trash"].map((section) => (
                 <button
@@ -294,11 +294,9 @@ const JournalsPage = () => {
                 <h2 className="text-xl font-semibold">
                   {currentJournal.title}
                 </h2>
-                {/* <div className="overflow-y-scroll"> */}
-                  <p className="whitespace-pre-wrap text-left overflow-y-scroll h-[60vh]">
-                    {currentJournal.content}
-                  </p>
-                {/* </div> */}
+                <p className="whitespace-pre-wrap text-left overflow-y-scroll h-[60vh]">
+                  {currentJournal.content}
+                </p>
                 <button
                   onClick={() => setCurrentJournal(null)}
                   className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300"
