@@ -267,7 +267,7 @@ const JournalsPage = () => {
                       content: e.target.value,
                     })
                   }
-                  className="w-full p-2 border rounded-md h-64"
+                  className="w-full p-2 border rounded-md h-[60vh]"
                 />
                 <div className="flex space-x-2">
                   <button
@@ -294,7 +294,11 @@ const JournalsPage = () => {
                 <h2 className="text-xl font-semibold">
                   {currentJournal.title}
                 </h2>
-                <p className="whitespace-pre-wrap">{currentJournal.content}</p>
+                {/* <div className="overflow-y-scroll"> */}
+                  <p className="whitespace-pre-wrap text-left overflow-y-scroll h-[60vh]">
+                    {currentJournal.content}
+                  </p>
+                {/* </div> */}
                 <button
                   onClick={() => setCurrentJournal(null)}
                   className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300"

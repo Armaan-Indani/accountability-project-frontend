@@ -8,7 +8,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <NavBar />
-      <div className="h-screen flex flex-col md:flex-row items-center justify-evenly p-4 md:p-0">
+      <div className="h-[calc(100vh-100px)] flex flex-col md:flex-row items-center justify-evenly p-4 md:p-0">
         <style>{`
           @keyframes scaleIn {
             0% {
