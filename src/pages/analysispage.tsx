@@ -37,8 +37,18 @@ export default function ReflectionPagePreview() {
                   className="w-full h-48 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                 />
               ) : (
-                <div className="w-full h-48 p-4 border rounded-lg bg-gray-50 overflow-auto">
-                  {criticalAnalysis || "No analysis yet..."}
+                <div className="w-full h-48 p-4 border rounded-lg bg-gray-50 overflow-auto text-left">
+                  {criticalAnalysis.trim() === ""
+                    ? "No Analysis yet..."
+                    : criticalAnalysis
+                        .trim()
+                        .split("\n")
+                        .map((line, index) => (
+                          <React.Fragment key={index}>
+                            {line}
+                            <br />
+                          </React.Fragment>
+                        ))}
                 </div>
               )}
 
@@ -103,7 +113,7 @@ export default function ReflectionPagePreview() {
               </div>
 
               {/* Journal Entry */}
-              <div className="space-y-4">
+              {/* <div className="space-y-4">
                 <label className="block text-lg font-medium text-gray-700">
                   Describe your day in short
                 </label>
@@ -119,7 +129,7 @@ export default function ReflectionPagePreview() {
                     {journalEntry || "No journal entry yet..."}
                   </div>
                 )}
-              </div>
+              </div> */}
 
               {/* Save/Edit Button */}
               <div className="flex justify-end">
