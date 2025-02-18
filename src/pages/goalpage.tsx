@@ -1,535 +1,607 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState } from "react";
 import { X, Plus, Edit2 } from "lucide-react";
 import NavBar from "../components/NavBar.tsx";
 
-type ModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
-};
+// Custom styled components to replace shadcn components
+const Card = ({ children, className = "" }) => (
+  <div className={`bg-white rounded-lg shadow-md ${className}`}>{children}</div>
+);
 
-const Modal = ({ isOpen, onClose, children }: ModalProps) => {
-  if (!isOpen) return null;
+const CardHeader = ({ children }) => (
+  <div className="p-4 border-b">{children}</div>
+);
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg p-6 w-4/5 max-w-4xl max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <X size={24} />
-          </button>
-        </div>
-        {children}
-      </div>
+const CardTitle = ({ children }) => (
+  <h3 className="text-lg font-semibold">{children}</h3>
+);
+
+const CardContent = ({ children }) => <div className="p-4">{children}</div>;
+
+const Button = ({
+  children,
+  onClick,
+  variant = "primary",
+  size = "md",
+  className = "",
+}) => (
+  <button
+    onClick={onClick}
+    className={`
+      px-4 py-3 ml-2 rounded-md font-medium
+      ${
+        variant === "primary"
+          ? "bg-blue-600 text-white hover:bg-blue-700"
+          : "border border-gray-300 hover:bg-gray-50"
+      }
+      ${size === "sm" ? "text-sm px-2 py-1" : ""}
+      ${className}
+    `}
+  >
+    {children}
+  </button>
+);
+
+const Input = React.forwardRef(({ className = "", ...props }, ref) => (
+  <input
+    ref={ref}
+    className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+    {...props}
+  />
+));
+
+const Textarea = React.forwardRef(({ className = "", ...props }, ref) => (
+  <textarea
+    ref={ref}
+    className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+    {...props}
+  />
+));
+
+const Checkbox = ({ checked, onCheckedChange }) => (
+  <input
+    type="checkbox"
+    checked={checked}
+    onChange={(e) => onCheckedChange(e.target.checked)}
+    className="h-4 w-4 rounded border-gray-300"
+  />
+);
+
+const Dialog = ({ open, children }) =>
+  open ? (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      {children}
     </div>
-  );
-};
+  ) : null;
 
-const GoalForm = ({ onSubmit, onClose, initialData = null }) => {
-  const [goalData, setGoalData] = useState(
-    initialData || {
-      title: "",
+const DialogContent = ({ children, className = "" }) => (
+  <div className={`bg-white rounded-lg p-6 w-full mx-4 ${className}`}>
+    {children}
+  </div>
+);
+
+const DialogHeader = ({ children }) => <div className="mb-4">{children}</div>;
+
+const DialogTitle = ({ children, className = "" }) => (
+  <h2 className={`text-xl font-bold ${className}`}>{children}</h2>
+);
+
+const DialogClose = ({ onClick }) => (
+  <button onClick={onClick} className="text-gray-500 hover:text-gray-700">
+    &times;
+  </button>
+);
+
+const GoalManagementApp = () => {
+  const [goals, setGoals] = useState([]);
+  const [showAddGoal, setShowAddGoal] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [showGoalDetails, setShowGoalDetails] = useState(false);
+
+  const [newGoal, setNewGoal] = useState({
+    name: "",
+    deadline: "",
+    subgoals: [],
+    habits: [],
+    description: "",
+    what: "",
+    why: "",
+    who: "",
+    where: "",
+    which: "",
+    howMuch: "",
+    resources: "",
+    alignment: "",
+    completed: false,
+    subgoalProgress: {},
+  });
+
+  const [tempSubgoal, setTempSubgoal] = useState("");
+  const [tempHabit, setTempHabit] = useState("");
+
+  const resetNewGoal = () => {
+    setNewGoal({
+      name: "",
       deadline: "",
       subgoals: [],
       habits: [],
-      smart: {
-        specific: "",
-        measurable: "",
-        achievable: "",
-        relevant: "",
-        timeBound: "",
-      },
       description: "",
+      what: "",
+      why: "",
+      who: "",
+      where: "",
+      which: "",
+      howMuch: "",
+      resources: "",
+      alignment: "",
+      completed: false,
+      subgoalProgress: {},
+    });
+  };
+
+  const handleAddSubgoal = () => {
+    if (tempSubgoal.trim()) {
+      setNewGoal({
+        ...newGoal,
+        subgoals: [...newGoal.subgoals, tempSubgoal.trim()],
+        subgoalProgress: {
+          ...newGoal.subgoalProgress,
+          [tempSubgoal.trim()]: false,
+        },
+      });
+      setTempSubgoal("");
     }
-  );
-
-  const addSubgoal = () => {
-    setGoalData({
-      ...goalData,
-      subgoals: [
-        ...goalData.subgoals,
-        { id: Date.now(), text: "", completed: false },
-      ],
-    });
   };
 
-  const addHabit = () => {
-    setGoalData({
-      ...goalData,
-      habits: [
-        ...goalData.habits,
-        { id: Date.now(), text: "", completed: false },
-      ],
-    });
+  const handleAddHabit = () => {
+    if (tempHabit.trim()) {
+      setNewGoal({
+        ...newGoal,
+        habits: [...newGoal.habits, tempHabit.trim()],
+      });
+      setTempHabit("");
+    }
   };
 
-  const deleteSubgoal = (id) => {
-    setGoalData({
-      ...goalData,
-      subgoals: goalData.subgoals.filter((sg) => sg.id !== id),
-    });
+  const handleCreateGoal = () => {
+    if (newGoal.name && newGoal.deadline) {
+      if (isEditing) {
+        setGoals(
+          goals.map((g) => (g.name === selectedGoal.name ? newGoal : g))
+        );
+        setIsEditing(false);
+      } else {
+        setGoals([...goals, newGoal]);
+      }
+      setShowAddGoal(false);
+      resetNewGoal();
+      setSelectedGoal(null);
+    }
   };
 
-  const deleteHabit = (id) => {
-    setGoalData({
-      ...goalData,
-      habits: goalData.habits.filter((h) => h.id !== id),
-    });
-  };
-
-  return (
-    <div className="grid grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <input
-          type="text"
-          placeholder="Goal Title"
-          className="w-full p-2 border rounded"
-          value={goalData.title}
-          onChange={(e) => setGoalData({ ...goalData, title: e.target.value })}
-        />
-
-        <input
-          type="date"
-          className="w-full p-2 border rounded"
-          value={goalData.deadline}
-          onChange={(e) =>
-            setGoalData({ ...goalData, deadline: e.target.value })
-          }
-        />
-
-        <div className="space-y-2">
-          <h3 className="font-semibold">Subgoals</h3>
-          {goalData.subgoals.map((sg, index) => (
-            <div key={sg.id} className="flex gap-2">
-              <input
-                type="text"
-                placeholder={`Subgoal ${index + 1}`}
-                className="flex-1 p-2 border rounded"
-                value={sg.text}
-                onChange={(e) => {
-                  const newSubgoals = [...goalData.subgoals];
-                  newSubgoals[index].text = e.target.value;
-                  setGoalData({ ...goalData, subgoals: newSubgoals });
-                }}
-              />
-              <button
-                onClick={() => deleteSubgoal(sg.id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <X size={20} />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={addSubgoal}
-            className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
-          >
-            <Plus size={16} /> Add Subgoal
-          </button>
-        </div>
-
-        <div className="space-y-2">
-          <h3 className="font-semibold">Habits</h3>
-          {goalData.habits.map((habit, index) => (
-            <div key={habit.id} className="flex gap-2">
-              <input
-                type="text"
-                placeholder={`Habit ${index + 1}`}
-                className="flex-1 p-2 border rounded"
-                value={habit.text}
-                onChange={(e) => {
-                  const newHabits = [...goalData.habits];
-                  newHabits[index].text = e.target.value;
-                  setGoalData({ ...goalData, habits: newHabits });
-                }}
-              />
-              <button
-                onClick={() => deleteHabit(habit.id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <X size={20} />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={addHabit}
-            className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
-          >
-            <Plus size={16} /> Add Habit
-          </button>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="font-semibold">SMART Goal</h3>
-          <input
-            type="text"
-            placeholder="Specific"
-            className="w-full p-2 border rounded"
-            value={goalData.smart.specific}
-            onChange={(e) =>
-              setGoalData({
-                ...goalData,
-                smart: { ...goalData.smart, specific: e.target.value },
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Measurable"
-            className="w-full p-2 border rounded"
-            value={goalData.smart.measurable}
-            onChange={(e) =>
-              setGoalData({
-                ...goalData,
-                smart: { ...goalData.smart, measurable: e.target.value },
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Achievable"
-            className="w-full p-2 border rounded"
-            value={goalData.smart.achievable}
-            onChange={(e) =>
-              setGoalData({
-                ...goalData,
-                smart: { ...goalData.smart, achievable: e.target.value },
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Relevant"
-            className="w-full p-2 border rounded"
-            value={goalData.smart.relevant}
-            onChange={(e) =>
-              setGoalData({
-                ...goalData,
-                smart: { ...goalData.smart, relevant: e.target.value },
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Time-bound"
-            className="w-full p-2 border rounded"
-            value={goalData.smart.timeBound}
-            onChange={(e) =>
-              setGoalData({
-                ...goalData,
-                smart: { ...goalData.smart, timeBound: e.target.value },
-              })
-            }
-          />
-        </div>
-
-        <div>
-          <h3 className="font-semibold">Description</h3>
-          <textarea
-            placeholder="Description of the goal"
-            className="w-full p-2 border rounded h-32"
-            value={goalData.description}
-            onChange={(e) =>
-              setGoalData({ ...goalData, description: e.target.value })
-            }
-          />
-        </div>
-
-        <button
-          onClick={() => {
-            onSubmit(goalData);
-            onClose();
-          }}
-          className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-colors"
-        >
-          {initialData ? "Update Goal" : "Create Goal"}
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const GoalDetails = ({ goal, onClose, onSubgoalToggle, onEdit }) => {
-  return (
-    <div className="grid grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">{goal.title}</h2>
-          <button
-            onClick={() => onEdit(goal)}
-            className="text-indigo-600 hover:text-indigo-800"
-          >
-            <Edit2 size={20} />
-          </button>
-        </div>
-
-        <div className="text-gray-600">
-          Deadline: {new Date(goal.deadline).toLocaleDateString()}
-        </div>
-
-        <div className="space-y-2">
-          <h3 className="font-semibold">Subgoals</h3>
-          {goal.subgoals.map((sg) => (
-            <div key={sg.id} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={sg.completed}
-                onChange={() => onSubgoalToggle(goal.id, sg.id)}
-                className="w-4 h-4 text-indigo-600"
-              />
-              <span
-                className={sg.completed ? "line-through text-gray-500" : ""}
-              >
-                {sg.text}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-2">
-          <h3 className="font-semibold">Habits</h3>
-          {goal.habits.map((habit) => (
-            <div key={habit.id} className="p-2 bg-gray-50 rounded">
-              {habit.text}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <h3 className="font-semibold">SMART Goal</h3>
-          <div className="space-y-1">
-            <p>
-              <strong>Specific:</strong> {goal.smart.specific}
-            </p>
-            <p>
-              <strong>Measurable:</strong> {goal.smart.measurable}
-            </p>
-            <p>
-              <strong>Achievable:</strong> {goal.smart.achievable}
-            </p>
-            <p>
-              <strong>Relevant:</strong> {goal.smart.relevant}
-            </p>
-            <p>
-              <strong>Time-bound:</strong> {goal.smart.timeBound}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="font-semibold">Description</h3>
-          <p className="mt-2 text-gray-600">{goal.description}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const GoalsPage = () => {
-  const [isNewGoalModalOpen, setIsNewGoalModalOpen] = useState(false);
-  const [selectedGoal, setSelectedGoal] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [goals, setGoals] = useState([]);
-
-  const handleNewGoal = (goalData) => {
-    setGoals([...goals, { ...goalData, id: Date.now(), completed: false }]);
-  };
-
-  const handleUpdateGoal = (updatedGoal) => {
-    setGoals(
-      goals.map((goal) =>
-        goal.id === updatedGoal.id ? { ...updatedGoal } : goal
-      )
-    );
-  };
-
-  const toggleGoalComplete = (goalId) => {
-    setGoals(
-      goals.map((goal) =>
-        goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
-      )
-    );
-  };
-
-  const toggleSubgoal = (goalId, subgoalId) => {
-    setGoals(
-      goals.map((goal) => {
-        if (goal.id === goalId) {
-          return {
-            ...goal,
-            subgoals: goal.subgoals.map((sg) =>
-              sg.id === subgoalId ? { ...sg, completed: !sg.completed } : sg
-            ),
-          };
-        }
-        return goal;
-      })
-    );
-  };
-
-  const handleEdit = (goal) => {
+  const handleGoalClick = (goal) => {
     setSelectedGoal(goal);
-    setIsEditMode(true);
+    setShowGoalDetails(true);
   };
 
-  const inProgressGoals = goals.filter((g) => !g.completed);
-  const accomplishedGoals = goals.filter((g) => g.completed);
+  const handleEditClick = () => {
+    setNewGoal(selectedGoal);
+    setShowAddGoal(true);
+    setIsEditing(true);
+    setShowGoalDetails(false);
+  };
+
+  const handleGoalCompletion = (goalName, completed) => {
+    setGoals(goals.map((g) => (g.name === goalName ? { ...g, completed } : g)));
+  };
+
+  const handleSubgoalCompletion = (goalName, subgoal, completed) => {
+    setGoals(
+      goals.map((g) =>
+        g.name === goalName
+          ? {
+              ...g,
+              subgoalProgress: {
+                ...g.subgoalProgress,
+                [subgoal]: completed,
+              },
+            }
+          : g
+      )
+    );
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div>
       <NavBar />
-
-      <div className="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
-          A goal without a plan is only a dream.
-        </h1>
-        <p className="text-center text-gray-600 mb-12">
-          Track, manage, and achieve your goals with our simple yet powerful
-          tool.
-        </p>
-
-        <button
-          onClick={() => setIsNewGoalModalOpen(true)}
-          className="mb-8 flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors shadow-md"
-        >
-          <Plus size={20} /> New Goal
-        </button>
-
-        <div className="grid grid-cols-2 gap-8">
-          <div className="bg-white rounded-lg p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Goals in Progress</h2>
-            <div className="space-y-4">
-              {inProgressGoals.map((goal) => (
-                <div
-                  key={goal.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-center gap-3 flex-grow">
-                    <input
-                      type="checkbox"
-                      checked={goal.completed}
-                      onChange={() => toggleGoalComplete(goal.id)}
-                      className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
-                    />
-                    <button
-                      onClick={() => {
-                        setSelectedGoal(goal);
-                        setIsEditMode(false);
-                      }}
-                      className="text-left hover:text-indigo-600 flex-grow font-medium"
-                    >
-                      {goal.title}
-                    </button>
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(goal.deadline).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
-              {inProgressGoals.length === 0 && (
-                <div className="text-center text-gray-500 py-4">
-                  No goals in progress. Click "New Goal" to get started!
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg p-6 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Accomplished Goals</h2>
-            <div className="space-y-4">
-              {accomplishedGoals.map((goal) => (
-                <div
-                  key={goal.id}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-center gap-3 flex-grow">
-                    <input
-                      type="checkbox"
-                      checked={goal.completed}
-                      onChange={() => toggleGoalComplete(goal.id)}
-                      className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
-                    />
-                    <button
-                      onClick={() => {
-                        setSelectedGoal(goal);
-                        setIsEditMode(false);
-                      }}
-                      className="text-left hover:text-indigo-600 flex-grow font-medium"
-                    >
-                      {goal.title}
-                    </button>
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(goal.deadline).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
-              {accomplishedGoals.length === 0 && (
-                <div className="text-center text-gray-500 py-4">
-                  Complete your goals to see them here!
-                </div>
-              )}
-            </div>
-          </div>
+      <div className="p-6 max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between mb-6">
+          <h1 className="text-2xl font-bold mb-4 md:mb-0">Goal Management</h1>
+          <Button onClick={() => setShowAddGoal(true)} children={undefined}>
+            Add New Goal
+          </Button>
         </div>
 
-        {/* Modals */}
-        <Modal
-          isOpen={isNewGoalModalOpen}
-          onClose={() => setIsNewGoalModalOpen(false)}
-          children={<></>}
-        >
-          <GoalForm
-            onSubmit={handleNewGoal}
-            onClose={() => setIsNewGoalModalOpen(false)}
-          />
-        </Modal>
+        <Dialog open={showAddGoal} children={undefined}>
+          <DialogContent
+            className="max-w-[90vw] max-h-[90vh] overflow-y-auto"
+            children={undefined}
+          >
+            <DialogHeader children={undefined}>
+              <div className="flex justify-between items-center">
+                <DialogTitle children={undefined}>
+                  {isEditing ? "Edit Goal" : "New Goal"}
+                </DialogTitle>
+                <DialogClose onClick={() => setShowAddGoal(false)} />
+              </div>
+            </DialogHeader>
 
-        <Modal
-          isOpen={!!selectedGoal}
-          onClose={() => {
-            setSelectedGoal(null);
-            setIsEditMode(false);
-          }}
-          children={<></>}
-        >
-          {selectedGoal && !isEditMode && (
-            <GoalDetails
-              goal={selectedGoal}
-              onClose={() => setSelectedGoal(null)}
-              onSubgoalToggle={toggleSubgoal}
-              onEdit={handleEdit}
-            />
-          )}
-          {selectedGoal && isEditMode && (
-            <GoalForm
-              initialData={selectedGoal}
-              onSubmit={(updatedGoal) => {
-                handleUpdateGoal({
-                  ...updatedGoal,
-                  id: selectedGoal.id,
-                  completed: selectedGoal.completed,
-                });
-                setIsEditMode(false);
-                setSelectedGoal(null);
-              }}
-              onClose={() => {
-                setIsEditMode(false);
-                setSelectedGoal(null);
-              }}
-            />
-          )}
-        </Modal>
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+              <Input
+                placeholder="Goal Name"
+                value={newGoal.name}
+                onChange={(e) =>
+                  setNewGoal({ ...newGoal, name: e.target.value })
+                }
+                className="flex-1"
+              />
+              <Input
+                type="date"
+                placeholder="Deadline"
+                value={newGoal.deadline}
+                onChange={(e) =>
+                  setNewGoal({ ...newGoal, deadline: e.target.value })
+                }
+                className="flex-1"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold">Subgoals</h3>
+                  </div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Input
+                      placeholder="Subgoal"
+                      value={tempSubgoal}
+                      onChange={(e) => setTempSubgoal(e.target.value)}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleAddSubgoal()
+                      }
+                    />
+                    <Button
+                      size="sm"
+                      onClick={handleAddSubgoal}
+                      children={undefined}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
+                    {newGoal.subgoals.map((subgoal, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <span>{subgoal}</span>
+                        <button
+                          onClick={() =>
+                            setNewGoal({
+                              ...newGoal,
+                              subgoals: newGoal.subgoals.filter(
+                                (_, i) => i !== index
+                              ),
+                            })
+                          }
+                          className="text-red-500"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold">Habits</h3>
+                  </div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Input
+                      placeholder="Habit"
+                      value={tempHabit}
+                      onChange={(e) => setTempHabit(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && handleAddHabit()}
+                    />
+                    <Button
+                      size="sm"
+                      onClick={handleAddHabit}
+                      children={undefined}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
+                    {newGoal.habits.map((habit, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <span>{habit}</span>
+                        <button
+                          onClick={() =>
+                            setNewGoal({
+                              ...newGoal,
+                              habits: newGoal.habits.filter(
+                                (_, i) => i !== index
+                              ),
+                            })
+                          }
+                          className="text-red-500"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-semibold">Description</h3>
+                </div>
+                <Textarea
+                  placeholder="Describe your goal..."
+                  value={newGoal.description}
+                  onChange={(e) =>
+                    setNewGoal({ ...newGoal, description: e.target.value })
+                  }
+                  className="h-32"
+                />
+              </div>
+              <div className="flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-semibold mb-1 w-max">
+                      What, Why, Who, Where, Which?
+                    </h4>
+                    <Textarea
+                      value={newGoal.what}
+                      onChange={(e) =>
+                        setNewGoal({ ...newGoal, what: e.target.value })
+                      }
+                      className="h-12 resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold mb-1 w-max">
+                      How much, How many?
+                    </h4>
+                    <Textarea
+                      value={newGoal.howMuch}
+                      onChange={(e) =>
+                        setNewGoal({ ...newGoal, howMuch: e.target.value })
+                      }
+                      className="h-12 resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold mb-1 w-max">
+                      Resources and Skills
+                    </h4>
+                    <Textarea
+                      value={newGoal.resources}
+                      onChange={(e) =>
+                        setNewGoal({ ...newGoal, resources: e.target.value })
+                      }
+                      className="h-12 resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold mb-1 w-max">
+                      Alignment with long term aim/plan
+                    </h4>
+                    <Textarea
+                      value={newGoal.alignment}
+                      onChange={(e) =>
+                        setNewGoal({ ...newGoal, alignment: e.target.value })
+                      }
+                      className="h-12 resize-none"
+                    />
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-end">
+                  <Button onClick={handleCreateGoal} children={undefined}>
+                    {isEditing ? "Save Changes" : "Create Goal"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showGoalDetails} children={undefined}>
+          <DialogContent
+            className="max-w-[80vw] max-h-[90vh] overflow-y-auto"
+            children={undefined}
+          >
+            <DialogHeader children={undefined}>
+              <div className="flex justify-between items-center">
+                <DialogTitle className="text-xl font-bold" children={undefined}>
+                  {selectedGoal?.name}
+                </DialogTitle>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600">
+                    Deadline: {selectedGoal?.deadline}
+                  </span>
+                  <DialogClose onClick={() => setShowGoalDetails(false)} />
+                </div>
+              </div>
+            </DialogHeader>
+
+            <div className="grid grid-cols-2 gap-6 mt-4">
+              <div>
+                <div className="mb-4">
+                  <h3 className="font-semibold mb-2">Subgoals</h3>
+                  <div className="max-h-40 overflow-y-auto">
+                    {selectedGoal?.subgoals.map((subgoal, index) => (
+                      <div key={index} className="flex items-center gap-2 mb-2">
+                        <Checkbox
+                          checked={
+                            selectedGoal.subgoalProgress[subgoal] || false
+                          }
+                          onCheckedChange={(checked) =>
+                            handleSubgoalCompletion(
+                              selectedGoal.name,
+                              subgoal,
+                              checked
+                            )
+                          }
+                        />
+                        <span>{subgoal}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <h3 className="font-semibold mb-2">Habits</h3>
+                  <div className="max-h-40 overflow-y-auto">
+                    {selectedGoal?.habits.map((habit, index) => (
+                      <div key={index} className="flex items-center gap-2 mb-2">
+                        <span>• {habit}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <h3 className="font-semibold mb-2">Description</h3>
+                  <div className="max-h-24 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                    {selectedGoal?.description}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {selectedGoal?.what && (
+                  <div>
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                      What, Why, Who, Where, Which?
+                    </h4>
+                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                      {selectedGoal.what}
+                    </div>
+                  </div>
+                )}
+
+                {selectedGoal?.howMuch && (
+                  <div>
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                      How much, How many?
+                    </h4>
+                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                      {selectedGoal.howMuch}
+                    </div>
+                  </div>
+                )}
+
+                {selectedGoal?.resources && (
+                  <div>
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                      Resources and Skills
+                    </h4>
+                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                      {selectedGoal.resources}
+                    </div>
+                  </div>
+                )}
+
+                {selectedGoal?.alignment && (
+                  <div>
+                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                      Alignment with long term aim/plan
+                    </h4>
+                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                      {selectedGoal.alignment}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2">
+              <Button onClick={handleEditClick} children={undefined}>
+                <div className="flex items-center justify-center">
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Edit Goal
+                </div>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowGoalDetails(false)}
+                children={undefined}
+              >
+                Close
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <div className="grid grid-cols-2 gap-6">
+          <Card children={undefined}>
+            <CardHeader children={undefined}>
+              <CardTitle children={undefined}>Goals in Progress</CardTitle>
+            </CardHeader>
+            <CardContent children={undefined}>
+              {goals
+                .filter((g) => !g.completed)
+                .map((goal, index) => (
+                  <div key={index} className="flex items-center gap-2 mb-2">
+                    <Checkbox
+                      checked={goal.completed}
+                      onCheckedChange={(checked) =>
+                        handleGoalCompletion(goal.name, checked)
+                      }
+                    />
+                    <button
+                      onClick={() => handleGoalClick(goal)}
+                      className="text-left hover:underline"
+                    >
+                      {goal.name} - {goal.deadline}
+                    </button>
+                  </div>
+                ))}
+            </CardContent>
+          </Card>
+
+          <Card children={undefined}>
+            <CardHeader children={undefined}>
+              <CardTitle children={undefined}>Accomplished Goals</CardTitle>
+            </CardHeader>
+            <CardContent children={undefined}>
+              {goals
+                .filter((g) => g.completed)
+                .map((goal, index) => (
+                  <div key={index} className="flex items-center gap-2 mb-2">
+                    <Checkbox
+                      checked={goal.completed}
+                      onCheckedChange={(checked) =>
+                        handleGoalCompletion(goal.name, checked)
+                      }
+                    />
+                    <button
+                      onClick={() => handleGoalClick(goal)}
+                      className="text-left hover:underline"
+                    >
+                      {goal.name} - {goal.deadline}
+                    </button>
+                  </div>
+                ))}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
 };
 
-export default GoalsPage;
+export default GoalManagementApp;

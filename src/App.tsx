@@ -1,14 +1,13 @@
 import React from "react";
 import "./App.css";
 import HomePage from "./pages/homepage.tsx";
-import GoalsPage from "./pages/goalpage.tsx";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AuthPage from "./pages/authpage.tsx";
 import ProtectedRoute from "./utils/authenticationGuard.tsx";
 import SettingsPage from "./pages/settingspage.tsx";
 import JournalsPage from "./pages/journalspage.tsx";
 import AnalysisPage from "./pages/analysispage.tsx";
-import GoalManagementApp from "./pages/goalspage3.tsx";
+import GoalPage from "./pages/goalpage.tsx";
 
 function App() {
   return (
@@ -24,8 +23,7 @@ function App() {
           <Route
             path="/goals"
             // element={<ProtectedRoute children={<GoalsPage />} />}
-            // element={<GoalsPage />}
-            element={<GoalManagementApp />}
+            element={<GoalPage />}
           />
           <Route
             path="/settings"
