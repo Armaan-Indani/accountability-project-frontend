@@ -132,7 +132,9 @@ const JournalsPage = () => {
                 onClick={() => handleViewJournal(journal)}
                 className="text-lg font-medium text-gray-900 hover:text-indigo-600"
               >
-                {journal.title}
+                {journal.title.length > 20
+                  ? `${journal.title.substring(0, 20)}...`
+                  : journal.title}
               </button>
               <div className="flex space-x-2">
                 <button
@@ -292,7 +294,9 @@ const JournalsPage = () => {
             ) : (
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">
-                  {currentJournal.title}
+                  {currentJournal.title.length > 20
+                    ? `${currentJournal.title.substring(0, 20)}...`
+                    : currentJournal.title}
                 </h2>
                 <p className="whitespace-pre-wrap text-left overflow-y-scroll h-[60vh]">
                   {currentJournal.content}
