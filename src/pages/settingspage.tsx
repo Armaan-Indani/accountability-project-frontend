@@ -31,7 +31,7 @@ const SettingsPage = () => {
     setPasswordUpdateSuccess(true);
     setTimeout(() => {
       setPasswordUpdateSuccess(false);
-    }, 3000);
+    }, 5000);
   };
 
   const renderProfile = () => (
@@ -40,7 +40,7 @@ const SettingsPage = () => {
       {isEditing ? (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 text-left">
               Name
             </label>
             <input
@@ -53,7 +53,7 @@ const SettingsPage = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 text-left">
               Occupation
             </label>
             <input
@@ -69,7 +69,7 @@ const SettingsPage = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 text-left">
               About
             </label>
             <textarea
@@ -101,19 +101,19 @@ const SettingsPage = () => {
       ) : (
         <div className="space-y-4 flex-row justify-items-start">
           <div className="justify-items-start">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 text-left">
               Name
             </label>
             <p className="mt-1 text-gray-900">{userDetails.name}</p>
           </div>
           <div className="justify-items-start">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 text-left">
               Occupation
             </label>
             <p className="mt-1 text-gray-900">{userDetails.occupation}</p>
           </div>
           <div className="justify-items-start">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 text-left">
               About
             </label>
             <p className="mt-1 text-gray-900">{userDetails.about}</p>
@@ -163,7 +163,7 @@ const SettingsPage = () => {
       <h2 className="text-xl font-semibold mb-4">Privacy & Security</h2>
       <div className="space-y-4 justify-items-start">
         <div className="justify-items-start">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 text-left">
             Email
           </label>
           <p className="mt-1 text-gray-900">joh***@example.com</p>
@@ -182,38 +182,20 @@ const SettingsPage = () => {
             Change Password
           </button>
         ) : (
-          <div className="space-y-4">
-            <p className="text-sm text-green-600">
-              OTP sent on your registered e-mail.
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Enter OTP
-              </label>
-              <input
-                type="text"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
-                placeholder="Enter OTP"
-              />
-            </div>
-            <button className="text-indigo-600 text-sm hover:text-indigo-700">
-              Resend OTP
-            </button>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                New Password
-              </label>
-              <input
-                type="password"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
-                placeholder="Enter new password"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 text-left">
+              New Password
+            </label>
+            <input
+              type="password"
+              className="mt-3 block w-full rounded-md border-gray-300 shadow-sm p-2 border mb-2"
+              placeholder="Enter new password"
+            />
             <button
               onClick={handleSavePassword}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 w-full"
             >
-              Save New Password
+              Save
             </button>
           </div>
         )}
