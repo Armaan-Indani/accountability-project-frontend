@@ -168,12 +168,12 @@ const SettingsPage = () => {
           </label>
           <p className="mt-1 text-gray-900">johndoe@example.com</p>
         </div>
+        <br />
         {passwordUpdateSuccess && (
           <p className="text-sm text-green-600">
             Your password has been updated successfully.
           </p>
         )}
-        <br />
         {!showOtpForm ? (
           <button
             onClick={() => setShowOtpForm(true)}
