@@ -27,7 +27,7 @@ const Button = ({
   <button
     onClick={onClick}
     className={`
-      px-4 py-3 ml-2 rounded-md font-medium
+      px-2 py-3 ml-2 rounded-md font-medium
       ${
         variant === "primary"
           ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -224,7 +224,7 @@ const GoalManagementApp = () => {
 
         <Dialog open={showAddGoal} children={undefined}>
           <DialogContent
-            className="max-w-[90vw] max-h-[90vh] overflow-y-auto"
+            className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]"
             children={undefined}
           >
             <DialogHeader children={undefined}>
@@ -300,7 +300,6 @@ const GoalManagementApp = () => {
                     ))}
                   </div>
                 </div>
-
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold">Habits</h3>
@@ -420,7 +419,7 @@ const GoalManagementApp = () => {
 
         <Dialog open={showGoalDetails} children={undefined}>
           <DialogContent
-            className="max-w-[80vw] max-h-[90vh] overflow-y-auto"
+            className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]"
             children={undefined}
           >
             <DialogHeader children={undefined}>
@@ -439,7 +438,9 @@ const GoalManagementApp = () => {
 
             <div className="grid grid-cols-2 gap-6 mt-4">
               <div>
-                <div className="mb-4">
+                <hr />
+
+                <div className="mt-4 mb-4">
                   <h3 className="font-semibold mb-2">Subgoals</h3>
                   <div className="max-h-40 overflow-y-auto">
                     {selectedGoal?.subgoals.map((subgoal, index) => (
@@ -462,7 +463,8 @@ const GoalManagementApp = () => {
                   </div>
                 </div>
 
-                <div className="mb-4">
+                <hr />
+                <div className="mt-4 mb-4">
                   <h3 className="font-semibold mb-2">Habits</h3>
                   <div className="max-h-40 overflow-y-auto">
                     {selectedGoal?.habits.map((habit, index) => (
@@ -473,75 +475,77 @@ const GoalManagementApp = () => {
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <h3 className="font-semibold mb-2">Description</h3>
-                  <div className="max-h-24 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                <hr />
+                <div className="mt-4 mb-4">
+                  <h3 className="font-semibold mb-4">Description</h3>
+                  <div className="max-h-24 overflow-y-auto p-2 border rounded text-left break-words whitespace-pre-wrap">
                     {selectedGoal?.description}
                   </div>
                 </div>
               </div>
-
-              <div className="space-y-4">
-                {selectedGoal?.what && (
-                  <div>
-                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
-                      What, Why, Who, Where, Which?
-                    </h4>
-                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
-                      {selectedGoal.what}
+              <div className="flex flex-col justify-between">
+                <div className="space-y-4">
+                  {selectedGoal?.what && (
+                    <div>
+                      <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                        What, Why, Who, Where, Which?
+                      </h4>
+                      <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                        {selectedGoal.what}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {selectedGoal?.howMuch && (
-                  <div>
-                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
-                      How much, How many?
-                    </h4>
-                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
-                      {selectedGoal.howMuch}
+                  {selectedGoal?.howMuch && (
+                    <div>
+                      <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                        How much, How many?
+                      </h4>
+                      <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                        {selectedGoal.howMuch}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {selectedGoal?.resources && (
-                  <div>
-                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
-                      Resources and Skills
-                    </h4>
-                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
-                      {selectedGoal.resources}
+                  {selectedGoal?.resources && (
+                    <div>
+                      <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                        Resources and Skills
+                      </h4>
+                      <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                        {selectedGoal.resources}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {selectedGoal?.alignment && (
-                  <div>
-                    <h4 className="text-sm font-semibold w-max max-w-fit text-left">
-                      Alignment with long term aim/plan
-                    </h4>
-                    <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
-                      {selectedGoal.alignment}
+                  {selectedGoal?.alignment && (
+                    <div>
+                      <h4 className="text-sm font-semibold w-max max-w-fit text-left">
+                        Alignment with long term aim/plan
+                      </h4>
+                      <div className="max-h-16 overflow-y-auto p-2 border rounded text-left whitespace-pre-wrap">
+                        {selectedGoal.alignment}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-2">
-              <Button onClick={handleEditClick} children={undefined}>
-                <div className="flex items-center justify-center">
-                  <Edit2 className="h-4 w-4 mr-2" />
-                  Edit Goal
+                  )}
                 </div>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowGoalDetails(false)}
-                children={undefined}
-              >
-                Close
-              </Button>
+
+                <div className="mt-6 flex justify-end gap-2">
+                  <Button onClick={handleEditClick} children={undefined}>
+                    <div className="flex items-center justify-center">
+                      <Edit2 className="h-4 w-4 mr-2" />
+                      Edit Goal
+                    </div>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowGoalDetails(false)}
+                    children={undefined}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
