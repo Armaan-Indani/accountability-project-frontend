@@ -72,13 +72,13 @@ const SettingsPage = () => {
             <label className="block text-sm font-medium text-gray-700 text-left">
               About
             </label>
-            <textarea
+            <input
+              type="text"
               value={editedDetails.about}
               onChange={(e) =>
                 setEditedDetails({ ...editedDetails, about: e.target.value })
               }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
-              rows={3}
             />
           </div>
           <div className="flex space-x-2">
@@ -161,12 +161,12 @@ const SettingsPage = () => {
   const renderPrivacySecurity = () => (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold mb-4">Privacy & Security</h2>
-      <div className="space-y-4 justify-items-start">
+      <div className="justify-items-start">
         <div className="justify-items-start">
           <label className="block text-sm font-medium text-gray-700 text-left">
             Email
           </label>
-          <p className="mt-1 text-gray-900">joh***@example.com</p>
+          <p className="mt-1 text-gray-900">johndoe@example.com</p>
         </div>
         {passwordUpdateSuccess && (
           <p className="text-sm text-green-600">
@@ -177,7 +177,7 @@ const SettingsPage = () => {
         {!showOtpForm ? (
           <button
             onClick={() => setShowOtpForm(true)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 mt-12"
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 mt-4"
           >
             Change Password
           </button>
@@ -188,8 +188,16 @@ const SettingsPage = () => {
             </label>
             <input
               type="password"
-              className="mt-3 block w-full rounded-md border-gray-300 shadow-sm p-2 border mb-2"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm p-2 border mb-3"
               placeholder="Enter new password"
+            />
+            <label className="block text-sm font-medium text-gray-700 text-left">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              className="mt-2 block w-full rounded-md border-gray-300 shadow-sm p-2 border mb-3"
+              placeholder="Confirm new password"
             />
             <button
               onClick={handleSavePassword}
@@ -208,9 +216,9 @@ const SettingsPage = () => {
       <NavBar />
 
       <main className="pt-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <div className="w-56 bg-white shadow-sm rounded-lg p-4">
+          <div className="w-full lg:w-56 bg-white shadow-sm rounded-lg p-4">
             <nav className="space-y-2">
               {["Profile", "Theme", "Privacy & Security"].map((section) => (
                 <button
