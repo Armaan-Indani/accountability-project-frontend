@@ -24,9 +24,9 @@ export default function ReflectionPagePreview() {
           Continuous improvement is better than delayed perfection!
         </h2>
         {/* Top Sections Container */}
-        <div className="w-full flex flex-row space-x-8 mb-8">
+        <div className="w-full flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8 mb-8">
           {/* Critical Analysis Section - Left Half */}
-          <div className="w-1/2 bg-white rounded-lg shadow-lg p-8 max-h-[78vh]">
+          <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-lg p-8 max-h-[78vh]">
             <div className="space-y-4 flex flex-col h-full">
               {isEditingAnalysis ? (
                 <textarea
@@ -74,7 +74,7 @@ export default function ReflectionPagePreview() {
           </div>
 
           {/* Daily Reflection Section - Right Half */}
-          <div className="w-1/2 bg-white rounded-lg shadow-lg p-8 max-h-[78vh] overflow-y-scroll">
+          <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-lg p-8 max-h-[78vh] overflow-y-scroll">
             <div className="space-y-4">
               <div className="space-y-4">
                 {/* Satisfaction Scale */}
@@ -212,25 +212,6 @@ export default function ReflectionPagePreview() {
                   )}
                 </div>
               </div>
-
-              {/* Journal Entry */}
-              {/* <div className="space-y-4">
-                <label className="block text-lg font-medium text-gray-700">
-                  Describe your day in short
-                </label>
-                {isEditingReflection ? (
-                  <textarea
-                    value={journalEntry}
-                    onChange={(e) => setJournalEntry(e.target.value)}
-                    placeholder="Write about your day..."
-                    className="w-full h-32 p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-                  />
-                ) : (
-                  <div className="w-full h-32 p-4 border rounded-lg bg-gray-50 overflow-auto">
-                    {journalEntry || "No journal entry yet..."}
-                  </div>
-                )}
-              </div> */}
 
               {/* Save/Edit Button */}
               <div className="flex justify-end">
