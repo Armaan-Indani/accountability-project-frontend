@@ -8,7 +8,6 @@ export default function ReflectionPagePreview() {
   const [satisfaction, setSatisfaction] = useState(0);
   const [mood, setMood] = useState(0);
   const [productivity, setProductivity] = useState(0);
-  const [journalEntry, setJournalEntry] = useState("");
   const [isEditingReflection, setIsEditingReflection] = useState(true);
 
   const handleSaveAnalysis = () => setIsEditingAnalysis(false);
