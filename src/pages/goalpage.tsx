@@ -279,7 +279,7 @@ const GoalManagementApp = () => {
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
+                  <div className="mt-2 space-y-2 max-h-24 overflow-y-auto">
                     {newGoal.subgoals.map((subgoal, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <span>{subgoal}</span>
@@ -319,7 +319,7 @@ const GoalManagementApp = () => {
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
-                  <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
+                  <div className="mt-2 space-y-2 max-h-24 overflow-y-auto">
                     {newGoal.habits.map((habit, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <span>{habit}</span>
@@ -356,9 +356,18 @@ const GoalManagementApp = () => {
               <div className="flex flex-col justify-between">
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-sm font-semibold mb-1 w-max">
-                      What, Why, Who, Where, Which?
-                    </h4>
+                    <div className="relative group flex flex-row justify-between">
+                      <h4 className="text-sm font-semibold mb-1 w-max">
+                        What, Why, Who, Where, Which?
+                      </h4>
+                      <i className="ml-1 mr-2 cursor-pointer font-serif relative group">
+                        <b>i</b>
+                        <div className="absolute w-72 text-justify right-0 top-full mt-1 border border-gray-200 p-2 text-xs text-black bg-gray-50 rounded-md italic opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
+                          Answer the applicable wh-words to make the goal more
+                          specific, and clearly define what you want to achieve.
+                        </div>
+                      </i>
+                    </div>
                     <Textarea
                       value={newGoal.what}
                       onChange={(e) =>
@@ -369,9 +378,18 @@ const GoalManagementApp = () => {
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold mb-1 w-max">
-                      How much, How many?
-                    </h4>
+                    <div className="relative group flex flex-row justify-between">
+                      <h4 className="text-sm font-semibold mb-1 w-max">
+                        How much, How many?
+                      </h4>
+                      <i className="ml-1 mr-2 cursor-pointer font-serif relative group">
+                        <b>i</b>
+                        <div className="absolute w-72 text-justify right-0 top-full mt-1 border border-gray-200 p-2 text-xs text-black bg-gray-50 rounded-md italic opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
+                          Quantify the goal and decide how much is enough to
+                          accomplish the goal. How will success be measured?
+                        </div>
+                      </i>
+                    </div>
                     <Textarea
                       value={newGoal.howMuch}
                       onChange={(e) =>
@@ -382,9 +400,19 @@ const GoalManagementApp = () => {
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold mb-1 w-max">
-                      Resources and Skills
-                    </h4>
+                    <div className="relative group flex flex-row justify-between">
+                      <h4 className="text-sm font-semibold mb-1 w-max">
+                        Skills and Resources
+                      </h4>
+                      <i className="ml-1 mr-2 cursor-pointer font-serif relative group">
+                        <b>i</b>
+                        <div className="absolute w-72 text-justify right-0 top-full mt-1 border border-gray-200 p-2 text-xs text-black bg-gray-50 rounded-md italic opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
+                          What are the required skills and resources? Do I have
+                          the required skills and resources? Can I develop and
+                          acquire them to achieve the goal?
+                        </div>
+                      </i>
+                    </div>
                     <Textarea
                       value={newGoal.resources}
                       onChange={(e) =>
@@ -395,9 +423,19 @@ const GoalManagementApp = () => {
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold mb-1 w-max">
-                      Alignment with long term aim/plan
-                    </h4>
+                    <div className="relative group flex flex-row justify-between">
+                      <h4 className="text-sm font-semibold mb-1 w-max">
+                        Alignment with long term aim/plan
+                      </h4>
+                      <i className="ml-1 mr-2 cursor-pointer font-serif relative group">
+                        <b>i</b>
+                        <div className="absolute w-72 text-justify right-0 top-full mt-1 border border-gray-200 p-2 text-xs text-black bg-gray-50 rounded-md italic opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
+                          Think on how the goal aligns with your long-term plans
+                          in life, and whether it is meaningful. Does this goal
+                          matter to me?
+                        </div>
+                      </i>
+                    </div>
                     <Textarea
                       value={newGoal.alignment}
                       onChange={(e) =>
@@ -442,7 +480,7 @@ const GoalManagementApp = () => {
 
                 <div className="mt-4 mb-4">
                   <h3 className="font-semibold mb-2">Subgoals</h3>
-                  <div className="max-h-40 overflow-y-auto">
+                  <div className="max-h-24 overflow-y-auto">
                     {selectedGoal?.subgoals.map((subgoal, index) => (
                       <div key={index} className="flex items-center gap-2 mb-2">
                         <Checkbox
@@ -466,7 +504,7 @@ const GoalManagementApp = () => {
                 <hr />
                 <div className="mt-4 mb-4">
                   <h3 className="font-semibold mb-2">Habits</h3>
-                  <div className="max-h-40 overflow-y-auto">
+                  <div className="max-h-24 overflow-y-auto">
                     {selectedGoal?.habits.map((habit, index) => (
                       <div key={index} className="flex items-center gap-2 mb-2">
                         <span>• {habit}</span>
