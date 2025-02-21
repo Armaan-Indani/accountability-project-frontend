@@ -13,8 +13,7 @@ const NavBar = () => {
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0">
             <a href="/home" className="flex items-center">
-              <div className="h-8 w-8 bg-indigo-600 rounded-full shadow-lg"></div>
-              <span className="ml-2 text-xl font-bold text-gray-800">Logo</span>
+              <img src="/upward-logo.png" alt="Logo" className="pt-1 h-12" />
             </a>
           </div>
           <div className="hidden md:flex items-center space-x-8">
