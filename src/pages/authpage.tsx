@@ -31,7 +31,7 @@ export default function AuthPage() {
 
           // Optionally redirect the user to the dashboard or other page
           console.log("Login successful!, token is: ", response.data.data);
-          window.location.href = "/home";
+          window.location.href = "/";
         } else {
           console.log("Registration successful! Please log in.");
         }

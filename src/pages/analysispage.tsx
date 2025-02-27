@@ -243,7 +243,7 @@ export default function ReflectionPagePreview() {
             A vision without a strategy remains an illusion.
           </h2>
           <button
-            onClick={() => (window.location.href = "/home#todo")}
+            onClick={() => (window.location.href = "/#todo")}
             className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md hover:shadow-lg mx-auto"
           >
             <Calendar className="w-5 h-5" />

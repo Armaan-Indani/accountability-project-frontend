@@ -14,9 +14,9 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<AuthPage />} />
+          <Route path="/login" element={<AuthPage />} />
           <Route
-            path="/home"
+            path="/"
             // element={<ProtectedRoute children={<HomePage />} />}
             element={<HomePage />}
           />

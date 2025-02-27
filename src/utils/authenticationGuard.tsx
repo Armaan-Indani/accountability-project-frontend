@@ -11,7 +11,7 @@ const isAuthenticated = () => {
 const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated()) {
     alert("Please login or sign up to access this page.");
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   return children; // If authenticated, render the protected content
