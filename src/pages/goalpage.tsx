@@ -208,7 +208,9 @@ const GoalManagementApp = () => {
       <NavBar />
       <div className="p-6 max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between mb-6">
-          <h1 className="text-2xl font-bold mb-4 md:mb-0">Arise, awake and stop not till the goal is reached.</h1>
+          <h1 className="text-2xl font-bold mb-4 md:mb-0">
+            Arise, awake and stop not till the goal is reached.
+          </h1>
           <Button onClick={() => setShowAddGoal(true)} children={undefined}>
             Add New Goal
           </Button>
@@ -219,16 +221,16 @@ const GoalManagementApp = () => {
             className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]"
             children={undefined}
           >
-            <DialogHeader children={undefined}>
+            {/* <DialogHeader children={undefined}>
               <div className="flex justify-between items-center">
                 <DialogTitle children={undefined}>
                   {isEditing ? "Edit Goal" : "New Goal"}
                 </DialogTitle>
                 <DialogClose onClick={() => setShowAddGoal(false)} />
               </div>
-            </DialogHeader>
+            </DialogHeader> */}
 
-            <div className="flex flex-col md:flex-row gap-4 mb-4">
+            <div className="flex flex-row gap-4 mb-4">
               <Input
                 placeholder="Goal Name"
                 value={newGoal.name}
@@ -237,15 +239,7 @@ const GoalManagementApp = () => {
                 }
                 className="flex-1"
               />
-              <Input
-                type="date"
-                placeholder="Deadline"
-                value={newGoal.deadline}
-                onChange={(e) =>
-                  setNewGoal({ ...newGoal, deadline: e.target.value })
-                }
-                className="flex-1"
-              />
+              <DialogClose onClick={() => setShowAddGoal(false)} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -347,6 +341,20 @@ const GoalManagementApp = () => {
               </div>
               <div className="flex flex-col justify-between">
                 <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold">Deadline</h3>
+                    </div>
+                    <Input
+                      type="date"
+                      placeholder="Deadline"
+                      value={newGoal.deadline}
+                      onChange={(e) =>
+                        setNewGoal({ ...newGoal, deadline: e.target.value })
+                      }
+                      className="border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 h-12 resize-none mb-2"
+                    />
+                  </div>
                   <div>
                     <div className="relative group flex flex-row justify-between">
                       <h4 className="text-sm font-semibold mb-1 w-max">
@@ -455,11 +463,15 @@ const GoalManagementApp = () => {
             <DialogHeader children={undefined}>
               <div className="flex justify-between items-center">
                 <DialogTitle className="text-xl font-bold" children={undefined}>
-                  {selectedGoal?.name}
+                  {/* {selectedGoal?.name} */}
+                  {selectedGoal?.name.length > 15
+                    ? `${selectedGoal?.name.substring(0, 15)}...`
+                    : selectedGoal?.name}
                 </DialogTitle>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600">
-                    Deadline: {selectedGoal?.deadline}
+                    Deadline:
+                    <br className="md:hidden" /> {selectedGoal?.deadline}
                   </span>
                   <DialogClose onClick={() => setShowGoalDetails(false)} />
                 </div>
@@ -585,7 +597,7 @@ const GoalManagementApp = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <Card children={undefined}>
             <CardHeader children={undefined}>
               <CardTitle children={undefined}>Goals in Progress</CardTitle>
@@ -594,19 +606,27 @@ const GoalManagementApp = () => {
               {goals
                 .filter((g) => !g.completed)
                 .map((goal, index) => (
-                  <div key={index} className="flex items-center gap-2 mb-2">
-                    <Checkbox
-                      checked={goal.completed}
-                      onCheckedChange={(checked) =>
-                        handleGoalCompletion(goal.name, checked)
-                      }
-                    />
-                    <button
-                      onClick={() => handleGoalClick(goal)}
-                      className="text-left text-xl hover:text-indigo-600"
-                    >
-                      {goal.name} - {goal.deadline}
-                    </button>
+                  <div
+                    className="flex justify-between items-center mb-2"
+                    key={index}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={goal.completed}
+                        onCheckedChange={(checked) =>
+                          handleGoalCompletion(goal.name, checked)
+                        }
+                      />
+                      <button
+                        onClick={() => handleGoalClick(goal)}
+                        className="text-left text-xl hover:text-indigo-600 font-semibold"
+                      >
+                        {goal.name.length > 15
+                          ? `${goal.name.substring(0, 15)}...`
+                          : goal.name}
+                      </button>
+                    </div>
+                    {new Date(goal.deadline).toLocaleDateString("en-GB")}
                   </div>
                 ))}
             </CardContent>
@@ -620,19 +640,27 @@ const GoalManagementApp = () => {
               {goals
                 .filter((g) => g.completed)
                 .map((goal, index) => (
-                  <div key={index} className="flex items-center gap-2 mb-2">
-                    <Checkbox
-                      checked={goal.completed}
-                      onCheckedChange={(checked) =>
-                        handleGoalCompletion(goal.name, checked)
-                      }
-                    />
-                    <button
-                      onClick={() => handleGoalClick(goal)}
-                      className="text-left text-xl hover:text-indigo-600"
-                    >
-                      {goal.name} - {goal.deadline}
-                    </button>
+                  <div
+                    className="flex justify-between items-center mb-2"
+                    key={index}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Checkbox
+                        checked={goal.completed}
+                        onCheckedChange={(checked) =>
+                          handleGoalCompletion(goal.name, checked)
+                        }
+                      />
+                      <button
+                        onClick={() => handleGoalClick(goal)}
+                        className="text-left text-xl hover:text-indigo-600 font-semibold"
+                      >
+                        {goal.name.length > 15
+                          ? `${goal.name.substring(0, 15)}...`
+                          : goal.name}
+                      </button>
+                    </div>
+                    {new Date(goal.deadline).toLocaleDateString("en-GB")}
                   </div>
                 ))}
             </CardContent>
