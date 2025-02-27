@@ -242,7 +242,10 @@ export default function ReflectionPagePreview() {
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             A vision without a strategy remains an illusion.
           </h2>
-          <button className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md hover:shadow-lg mx-auto">
+          <button
+            onClick={() => (window.location.href = "/home#todo")}
+            className="flex items-center space-x-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 shadow-md hover:shadow-lg mx-auto"
+          >
             <Calendar className="w-5 h-5" />
             <span>Plan for tomorrow</span>
           </button>
