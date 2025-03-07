@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { X, Plus, Edit2 } from "lucide-react";
 import NavBar from "../components/NavBar.tsx";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 // Custom styled components to replace shadcn components
 const Card = ({ children, className = "" }) => (
   <div className={`bg-white rounded-lg shadow-md ${className}`}>{children}</div>
@@ -97,6 +99,14 @@ const GoalManagementApp = () => {
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showGoalDetails, setShowGoalDetails] = useState(false);
+
+  const fetchToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Token not found");
+    }
+    return token;
+  };
 
   const [newGoal, setNewGoal] = useState({
     name: "",

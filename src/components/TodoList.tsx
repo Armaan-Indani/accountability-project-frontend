@@ -3,7 +3,7 @@ import axios from "axios";
 import DeleteIcon from "./DeleteIcon.tsx";
 import CrossIcon from "./CrossIcon.tsx";
 
-const BACKEND_URL = "http://localhost:5000";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // TODO1: Add subtasks
 
