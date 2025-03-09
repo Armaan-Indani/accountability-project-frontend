@@ -1,116 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Plus, Edit2 } from "lucide-react";
 import NavBar from "../components/NavBar.tsx";
+import axios from "axios";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Button,
+  Input,
+  Textarea,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "../components/UIComponents.tsx";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Custom styled components to replace shadcn components
-const Card = ({ children, className = "" }) => (
-  <div className={`bg-white rounded-lg shadow-md ${className}`}>{children}</div>
-);
+type Subgoal = {
+  name: string;
+  completed: boolean;
+};
 
-const CardHeader = ({ children }) => (
-  <div className="p-4 border-b">{children}</div>
-);
+type Habit = {
+  name: string;
+  frequency: string;
+};
 
-const CardTitle = ({ children }) => (
-  <h3 className="text-lg font-semibold">{children}</h3>
-);
-
-const CardContent = ({ children }) => <div className="p-4">{children}</div>;
-
-const Button = ({
-  children,
-  onClick,
-  variant = "primary",
-  size = "md",
-  className = "",
-}) => (
-  <button
-    onClick={onClick}
-    className={`
-      px-2 py-3 ml-2 rounded-md font-medium
-      ${
-        variant === "primary"
-          ? "bg-indigo-600 text-white hover:bg-indigo-700"
-          : "border border-gray-300 hover:bg-gray-50"
-      }
-      ${size === "sm" ? "text-sm px-2 py-1" : ""}
-      ${className}
-    `}
-  >
-    {children}
-  </button>
-);
-
-const Input = React.forwardRef(({ className = "", ...props }, ref) => (
-  <input
-    ref={ref}
-    className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 ${className}`}
-    {...props}
-  />
-));
-
-const Textarea = React.forwardRef(({ className = "", ...props }, ref) => (
-  <textarea
-    ref={ref}
-    className={`border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 ${className}`}
-    {...props}
-  />
-));
-
-const Checkbox = ({ checked, onCheckedChange }) => (
-  <input
-    type="checkbox"
-    checked={checked}
-    onChange={(e) => onCheckedChange(e.target.checked)}
-    className="h-4 w-4 rounded border-gray-300"
-  />
-);
-
-const Dialog = ({ open, children }) =>
-  open ? (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      {children}
-    </div>
-  ) : null;
-
-const DialogContent = ({ children, className = "" }) => (
-  <div className={`bg-white rounded-lg p-6 w-full mx-4 ${className}`}>
-    {children}
-  </div>
-);
-
-const DialogHeader = ({ children }) => <div className="mb-4">{children}</div>;
-
-const DialogTitle = ({ children, className = "" }) => (
-  <h2 className={`text-xl font-bold ${className}`}>{children}</h2>
-);
-
-const DialogClose = ({ onClick }) => (
-  <button onClick={onClick} className="text-gray-500 hover:text-gray-700">
-    &times;
-  </button>
-);
+type Goal = {
+  id: number;
+  name: string;
+  deadline: Date;
+  subgoals: Subgoal[];
+  habits: Habit[];
+  description: string;
+  what: string;
+  howMuch: string;
+  resources: string;
+  alignment: string;
+  completed: boolean;
+  subgoalProgress: { [key: string]: boolean };
+};
 
 const GoalManagementApp = () => {
-  const [goals, setGoals] = useState([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [showAddGoal, setShowAddGoal] = useState(false);
-  const [selectedGoal, setSelectedGoal] = useState(null);
+  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showGoalDetails, setShowGoalDetails] = useState(false);
 
-  const fetchToken = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("Token not found");
-    }
-    return token;
-  };
-
-  const [newGoal, setNewGoal] = useState({
+  const [newGoal, setNewGoal] = useState<Omit<Goal, "id">>({
     name: "",
-    deadline: "",
+    deadline: new Date(),
     subgoals: [],
     habits: [],
     description: "",
@@ -124,11 +68,12 @@ const GoalManagementApp = () => {
 
   const [tempSubgoal, setTempSubgoal] = useState("");
   const [tempHabit, setTempHabit] = useState("");
+  const [tempHabitFrequency, setTempHabitFrequency] = useState("");
 
   const resetNewGoal = () => {
     setNewGoal({
       name: "",
-      deadline: "",
+      deadline: new Date(),
       subgoals: [],
       habits: [],
       description: "",
@@ -141,11 +86,62 @@ const GoalManagementApp = () => {
     });
   };
 
+  const fetchToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Token not found");
+    }
+    return token;
+  };
+
+  useEffect(() => {
+    const fetchGoals = async () => {
+      try {
+        const token = fetchToken();
+        const response = await axios.get(`${BACKEND_URL}/api/goal/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
+
+        if (response.data.status === "success") {
+          setGoals(
+            response.data.data.map((goal: any) => ({
+              id: goal.ID.toString(),
+              name: goal.name,
+              deadline: goal.deadline,
+              subgoals: goal.subgoals.map((subgoal: any) => {
+                return { name: subgoal.name, completed: subgoal.completed };
+              }),
+              habits: goal.habits.map((habit: any) => {
+                return { name: habit.name, frequency: habit.frequency };
+              }),
+              description: goal.description,
+              what: goal.what,
+              howMuch: goal.how_much,
+              resources: goal.resources,
+              alignment: goal.alignment,
+              completed: goal.completed,
+            }))
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching goals:", error);
+      }
+    };
+
+    fetchGoals();
+  }, []);
+
   const handleAddSubgoal = () => {
     if (tempSubgoal.trim()) {
       setNewGoal({
         ...newGoal,
-        subgoals: [...newGoal.subgoals, tempSubgoal.trim()],
+        subgoals: [
+          ...newGoal.subgoals,
+          { name: tempSubgoal.trim(), completed: false },
+        ],
         subgoalProgress: {
           ...newGoal.subgoalProgress,
           [tempSubgoal.trim()]: false,
@@ -156,28 +152,39 @@ const GoalManagementApp = () => {
   };
 
   const handleAddHabit = () => {
-    if (tempHabit.trim()) {
+    if (tempHabit.trim() && tempHabitFrequency.trim()) {
       setNewGoal({
         ...newGoal,
-        habits: [...newGoal.habits, tempHabit.trim()],
+        habits: [
+          ...newGoal.habits,
+          { name: tempHabit.trim(), frequency: tempHabitFrequency.trim() },
+        ],
       });
       setTempHabit("");
+      setTempHabitFrequency("");
     }
   };
 
-  const handleCreateGoal = () => {
+  const handleCreateGoal = async () => {
     if (newGoal.name && newGoal.deadline) {
-      if (isEditing) {
-        setGoals(
-          goals.map((g) => (g.name === selectedGoal.name ? newGoal : g))
-        );
-        setIsEditing(false);
-      } else {
-        setGoals([...goals, newGoal]);
+      try {
+        const token = fetchToken();
+        const response = await axios.post(`${BACKEND_URL}/api/goal/`, newGoal, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
+        const createdGoal = response.data.data;
+        setGoals([...goals, createdGoal]);
+        setShowAddGoal(false);
+        resetNewGoal();
+        setSelectedGoal(null);
+      } catch (error) {
+        console.error("Error creating goal:", error);
       }
-      setShowAddGoal(false);
-      resetNewGoal();
-      setSelectedGoal(null);
+    } else {
+      alert("Please fill in the deadline and title");
     }
   };
 
@@ -186,21 +193,63 @@ const GoalManagementApp = () => {
     setShowGoalDetails(true);
   };
 
-  const handleEditClick = () => {
-    setNewGoal(selectedGoal);
-    setShowAddGoal(true);
-    setIsEditing(true);
-    setShowGoalDetails(false);
+  const handleEditClick = async () => {
+    if (selectedGoal) {
+      setNewGoal({
+        name: selectedGoal.name,
+        deadline: selectedGoal.deadline,
+        subgoals: selectedGoal.subgoals,
+        habits: selectedGoal.habits,
+        description: selectedGoal.description,
+        what: selectedGoal.what,
+        howMuch: selectedGoal.howMuch,
+        resources: selectedGoal.resources,
+        alignment: selectedGoal.alignment,
+        completed: selectedGoal.completed,
+        subgoalProgress: selectedGoal.subgoalProgress,
+      });
+      setShowAddGoal(true);
+      setIsEditing(true);
+      setShowGoalDetails(false);
+    }
   };
 
-  const handleGoalCompletion = (goalName, completed) => {
-    setGoals(goals.map((g) => (g.name === goalName ? { ...g, completed } : g)));
+  const handleSaveChanges = async () => {
+    if (selectedGoal) {
+      try {
+        const token = fetchToken();
+        const response = await axios.patch(
+          `${BACKEND_URL}/api/goal/${selectedGoal.id}`,
+          newGoal,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        const updatedGoal = response.data.data;
+        setGoals(
+          goals.map((g) => (g.id === selectedGoal.id ? updatedGoal : g))
+        );
+        setShowAddGoal(false);
+        resetNewGoal();
+        setSelectedGoal(null);
+        setIsEditing(false);
+      } catch (error) {
+        console.error("Error updating goal:", error);
+      }
+    }
   };
 
-  const handleSubgoalCompletion = (goalName, subgoal, completed) => {
+  const handleGoalCompletion = (goalID, completed) => {
+    setGoals(goals.map((g) => (g.id === goalID ? { ...g, completed } : g)));
+  };
+
+  const handleSubgoalCompletion = (goalID, subgoal, completed) => {
     setGoals(
       goals.map((g) =>
-        g.name === goalName
+        g.id === goalID
           ? {
               ...g,
               subgoalProgress: {
@@ -231,15 +280,6 @@ const GoalManagementApp = () => {
             className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]"
             children={undefined}
           >
-            {/* <DialogHeader children={undefined}>
-              <div className="flex justify-between items-center">
-                <DialogTitle children={undefined}>
-                  {isEditing ? "Edit Goal" : "New Goal"}
-                </DialogTitle>
-                <DialogClose onClick={() => setShowAddGoal(false)} />
-              </div>
-            </DialogHeader> */}
-
             <div className="flex flex-row gap-4 mb-4">
               <Input
                 placeholder="Goal Name"
@@ -278,7 +318,7 @@ const GoalManagementApp = () => {
                   <div className="mt-2 space-y-2 max-h-28 overflow-y-auto">
                     {newGoal.subgoals.map((subgoal, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <span>{subgoal}</span>
+                        <span>{subgoal.name}</span>
                         <button
                           onClick={() =>
                             setNewGoal({
@@ -307,6 +347,12 @@ const GoalManagementApp = () => {
                       onChange={(e) => setTempHabit(e.target.value)}
                       onKeyPress={(e) => e.key === "Enter" && handleAddHabit()}
                     />
+                    <Input
+                      placeholder="Frequency"
+                      value={tempHabitFrequency}
+                      onChange={(e) => setTempHabitFrequency(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && handleAddHabit()}
+                    />
                     <Button
                       size="sm"
                       onClick={handleAddHabit}
@@ -318,7 +364,9 @@ const GoalManagementApp = () => {
                   <div className="mt-2 space-y-2 max-h-28 overflow-y-auto">
                     {newGoal.habits.map((habit, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <span>{habit}</span>
+                        <span>
+                          {habit.name} - {habit.frequency}
+                        </span>
                         <button
                           onClick={() =>
                             setNewGoal({
@@ -356,12 +404,25 @@ const GoalManagementApp = () => {
                       <h3 className="font-semibold">Deadline</h3>
                     </div>
                     <Input
-                      type="date"
+                      type="datetime-local"
                       placeholder="Deadline"
-                      value={newGoal.deadline}
-                      onChange={(e) =>
-                        setNewGoal({ ...newGoal, deadline: e.target.value })
+                      value={
+                        newGoal.deadline instanceof Date
+                          ? new Date(
+                              newGoal.deadline.getTime() -
+                                newGoal.deadline.getTimezoneOffset() * 60000
+                            )
+                              .toISOString()
+                              .slice(0, 16)
+                          : ""
                       }
+                      onChange={(e) => {
+                        setNewGoal({
+                          ...newGoal,
+                          deadline: new Date(e.target.value),
+                        });
+                        console.log(new Date(e.target.value));
+                      }}
                       className="border rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 h-12 resize-none mb-2"
                     />
                   </div>
@@ -456,7 +517,10 @@ const GoalManagementApp = () => {
                   </div>
                 </div>
                 <div className="mt-6 flex justify-end">
-                  <Button onClick={handleCreateGoal} children={undefined}>
+                  <Button
+                    onClick={isEditing ? handleSaveChanges : handleCreateGoal}
+                    children={undefined}
+                  >
                     {isEditing ? "Save Changes" : "Create Goal"}
                   </Button>
                 </div>
@@ -481,7 +545,10 @@ const GoalManagementApp = () => {
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600">
                     Deadline:
-                    <br className="md:hidden" /> {selectedGoal?.deadline}
+                    <br className="md:hidden" />{" "}
+                    {selectedGoal?.deadline instanceof Date
+                      ? selectedGoal.deadline.toLocaleString()
+                      : ""}
                   </span>
                   <DialogClose onClick={() => setShowGoalDetails(false)} />
                 </div>
@@ -498,18 +565,16 @@ const GoalManagementApp = () => {
                     {selectedGoal?.subgoals.map((subgoal, index) => (
                       <div key={index} className="flex items-center gap-2 mb-2">
                         <Checkbox
-                          checked={
-                            selectedGoal.subgoalProgress[subgoal] || false
-                          }
+                          checked={subgoal.completed}
                           onCheckedChange={(checked) =>
                             handleSubgoalCompletion(
-                              selectedGoal.name,
-                              subgoal,
+                              selectedGoal.id,
+                              subgoal.name,
                               checked
                             )
                           }
                         />
-                        <span>{subgoal}</span>
+                        <span>{subgoal.name}</span>
                       </div>
                     ))}
                   </div>
@@ -521,7 +586,9 @@ const GoalManagementApp = () => {
                   <div className="max-h-28 overflow-y-auto">
                     {selectedGoal?.habits.map((habit, index) => (
                       <div key={index} className="flex items-center gap-2 mb-2">
-                        <span>• {habit}</span>
+                        <span>
+                          • {habit.name} - {habit.frequency}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -614,8 +681,8 @@ const GoalManagementApp = () => {
             </CardHeader>
             <CardContent children={undefined}>
               {goals
-                .filter((g) => !g.completed)
-                .map((goal, index) => (
+                .filter((g: Goal) => !g.completed)
+                .map((goal: Goal, index) => (
                   <div
                     className="flex justify-between items-center mb-2"
                     key={index}
@@ -624,7 +691,7 @@ const GoalManagementApp = () => {
                       <Checkbox
                         checked={goal.completed}
                         onCheckedChange={(checked) =>
-                          handleGoalCompletion(goal.name, checked)
+                          handleGoalCompletion(goal.id, checked)
                         }
                       />
                       <button
@@ -658,7 +725,7 @@ const GoalManagementApp = () => {
                       <Checkbox
                         checked={goal.completed}
                         onCheckedChange={(checked) =>
-                          handleGoalCompletion(goal.name, checked)
+                          handleGoalCompletion(goal.id, checked)
                         }
                       />
                       <button
