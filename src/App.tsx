@@ -17,8 +17,8 @@ function App() {
           <Route path="/login" element={<AuthPage />} />
           <Route
             path="/"
-            // element={<ProtectedRoute children={<HomePage />} />}
-            element={<HomePage />}
+            element={<ProtectedRoute children={<HomePage />} />}
+            // element={<HomePage />}
           />
           <Route
             path="/goals"

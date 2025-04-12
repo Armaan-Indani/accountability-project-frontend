@@ -8,16 +8,32 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [occupation, setOccupation] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle authentication logic here
 
-    const endpoint = isLogin ? "/api/auth/login" : "/api/user/register";
+    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
     const url = `${BASE_URL}${endpoint}`;
 
     // Set the appropriate endpoint
-    const requestData = { email: email, password: password, url }; // Prepare the request body
+    const requestData = isLogin
+      ? {
+          email: email,
+          password: password,
+          url,
+        }
+      : {
+          email: email,
+          password: password,
+          username: username,
+          name: name,
+          occupation: occupation,
+          url,
+        };
 
     try {
       const response = await axios.post(url, requestData);
@@ -33,7 +49,10 @@ export default function AuthPage() {
           console.log("Login successful!, token is: ", response.data.data);
           window.location.href = "/";
         } else {
-          console.log("Registration successful! Please log in.");
+          window.location.href = "/login";
+          window.alert(
+            "Registration successful! Please log in with your credentials."
+          );
         }
       } else {
         // Handle unexpected status codes
@@ -41,21 +60,23 @@ export default function AuthPage() {
       }
     } catch (error) {
       if (error.response) {
-        // Server responded with a status code outside the 2xx range
         console.error(
           "Error:",
           error.response.data.message || error.response.data
         );
+        window.alert(
+          `Error: ${error.response.data.message || "An error occurred"}`
+        );
       } else if (error.request) {
-        // No response was received from the server
         console.error("No response from the backend:", error.request);
+        window.alert("Error: No response from the backend. Please try again.");
       } else {
-        // Something happened setting up the request
         console.error("Error setting up the request:", error.message);
+        window.alert(`Error: ${error.message}`);
       }
     }
 
-    console.log("Form submitted:", { email, password, isLogin });
+    // console.log("Form submitted:", { email, password, isLogin });
   };
 
   const toggleAuthMode = () => {
@@ -78,12 +99,33 @@ export default function AuthPage() {
         </div>
 
         {/* Auth Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name Field */}
+          {!isLogin && (
+            <div className="space-y-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 text-left"
+              >
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="John Doe"
+              />
+            </div>
+          )}
+
           {/* Email Field */}
           <div className="space-y-2">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 text-left"
             >
               Email address
             </label>
@@ -103,11 +145,32 @@ export default function AuthPage() {
             </div>
           </div>
 
+          {/* Username Field */}
+          {!isLogin && (
+            <div className="space-y-2">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 text-left"
+              >
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Your username"
+              />
+            </div>
+          )}
+
           {/* Password Field */}
           <div className="space-y-2">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 text-left"
             >
               Password
             </label>
@@ -127,22 +190,31 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {/* Remember Me & Forgot Password */}
+          {/* Occupation Field */}
+          {!isLogin && (
+            <div className="space-y-2">
+              <label
+                htmlFor="occupation"
+                className="block text-sm font-medium text-gray-700 text-left"
+              >
+                Occupation
+              </label>
+              <input
+                id="occupation"
+                type="text"
+                value={occupation}
+                onChange={(e) => setOccupation(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Engineer, Student, etc."
+              />
+            </div>
+          )}
+
+          {/* Forgot Password */}
           {isLogin && (
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember_me"
-                  type="checkbox"
-                  className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                />
-                <label
-                  htmlFor="remember_me"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  Remember me
-                </label>
-              </div>
+              <div className="flex items-center"></div>
               <button
                 type="button"
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-500"

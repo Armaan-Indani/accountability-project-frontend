@@ -48,7 +48,11 @@ const NavBar = () => {
               Settings
             </a>
             <a
-              href="/logout"
+              href="/login"
+              onClick = {() => {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+              }}
               className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               Logout
