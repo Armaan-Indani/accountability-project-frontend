@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import TodoList from "../components/TodoList.tsx";
 import QuoteSection from "../components/QuoteSection.tsx";
 import NavBar from "../components/NavBar.tsx";
-import Calendar from "../components/Calendar.tsx";
+// import Calendar from "../components/Calendar.tsx";
 
 const HomePage = () => {
   const location = useLocation();
@@ -18,7 +18,7 @@ const HomePage = () => {
   }, [location]);
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-blue-100">
       <NavBar />
       <div className="h-[calc(100vh-100px)] flex flex-col md:flex-row items-center justify-evenly p-4 md:p-0">
         <style>{`

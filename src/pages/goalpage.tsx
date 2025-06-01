@@ -21,6 +21,7 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 type Subgoal = {
+  ID: number;
   name: string;
   completed: boolean;
 };
@@ -42,7 +43,6 @@ type Goal = {
   resources: string;
   alignment: string;
   completed: boolean;
-  subgoalProgress: { [key: string]: boolean };
 };
 
 const GoalManagementApp = () => {
@@ -63,7 +63,6 @@ const GoalManagementApp = () => {
     resources: "",
     alignment: "",
     completed: false,
-    subgoalProgress: {},
   });
 
   const [tempSubgoal, setTempSubgoal] = useState("");
@@ -112,7 +111,11 @@ const GoalManagementApp = () => {
               name: goal.name,
               deadline: goal.deadline,
               subgoals: goal.subgoals.map((subgoal: any) => {
-                return { name: subgoal.name, completed: subgoal.completed };
+                return {
+                  ID: subgoal.ID.toString(),
+                  name: subgoal.name,
+                  completed: subgoal.completed,
+                };
               }),
               habits: goal.habits.map((habit: any) => {
                 return { name: habit.name, frequency: habit.frequency };
@@ -135,24 +138,20 @@ const GoalManagementApp = () => {
   }, []);
 
   const handleAddSubgoal = () => {
-    if (tempSubgoal.trim()) {
+    if (tempSubgoal.trim() !== "") {
       setNewGoal({
         ...newGoal,
         subgoals: [
           ...newGoal.subgoals,
           { name: tempSubgoal.trim(), completed: false },
         ],
-        subgoalProgress: {
-          ...newGoal.subgoalProgress,
-          [tempSubgoal.trim()]: false,
-        },
       });
       setTempSubgoal("");
     }
   };
 
   const handleAddHabit = () => {
-    if (tempHabit.trim() && tempHabitFrequency.trim()) {
+    if (tempHabit.trim() !== "" && tempHabitFrequency.trim() !== "") {
       setNewGoal({
         ...newGoal,
         habits: [
@@ -206,7 +205,6 @@ const GoalManagementApp = () => {
         resources: selectedGoal.resources,
         alignment: selectedGoal.alignment,
         completed: selectedGoal.completed,
-        subgoalProgress: selectedGoal.subgoalProgress,
       });
       setShowAddGoal(true);
       setIsEditing(true);
@@ -218,7 +216,7 @@ const GoalManagementApp = () => {
     if (selectedGoal) {
       try {
         const token = fetchToken();
-        const response = await axios.patch(
+        const response = await axios.put(
           `${BACKEND_URL}/api/goal/${selectedGoal.ID}`,
           newGoal,
           {
@@ -243,12 +241,12 @@ const GoalManagementApp = () => {
     }
   };
 
-  const handleGoalCompletion = async (goalID, completed) => {
+  const handleGoalCompletion = async (goalID: Number, isCompleted: boolean) => {
     try {
       const token = fetchToken();
       await axios.patch(
         `${BACKEND_URL}/api/goal/${goalID}/toggle`,
-        { completed },
+        { isCompleted },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -257,27 +255,63 @@ const GoalManagementApp = () => {
         }
       );
       setGoals(
-        goals.map((g: Goal) => (g.ID === goalID ? { ...g, completed } : g))
+        goals.map((g: Goal) =>
+          g.ID === goalID ? { ...g, completed: isCompleted } : g
+        )
       );
     } catch (error) {
       console.error("Error toggling goal completion:", error);
     }
   };
 
-  const handleSubgoalCompletion = (goalID, subgoal, completed) => {
-    setGoals(
-      goals.map((g: Goal) =>
-        g.ID === goalID
-          ? {
+  const handleSubgoalCompletion = async (
+    goalID: number,
+    subgoalID: number,
+    isCompleted: boolean
+  ) => {
+    try {
+      const token = fetchToken();
+      await axios.patch(
+        `${BACKEND_URL}/api/goal/${goalID}/${subgoalID}/toggle`,
+        { isCompleted },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      setGoals(
+        goals.map((g: Goal) => {
+          if (String(g.ID) === String(goalID)) {
+            return {
               ...g,
-              subgoalProgress: {
-                ...g.subgoalProgress,
-                [subgoal]: completed,
-              },
+              subgoals: g.subgoals.map((sg: Subgoal) =>
+                String(sg.ID) === String(subgoalID)
+                  ? { ...sg, completed: isCompleted }
+                  : sg
+              ),
+            };
+          }
+          return g;
+        })
+      );
+      // Also update selectedGoal if it's open
+      setSelectedGoal((goal: Goal) =>
+        goal && String(goal.ID) === String(goalID)
+          ? {
+              ...goal,
+              subgoals: goal.subgoals.map((sg: Subgoal) =>
+                String(sg.ID) === String(subgoalID)
+                  ? { ...sg, completed: isCompleted }
+                  : sg
+              ),
             }
-          : g
-      )
-    );
+          : goal
+      );
+    } catch (error) {
+      console.error("Error toggling subgoal completion:", error);
+    }
   };
 
   return (
@@ -288,16 +322,11 @@ const GoalManagementApp = () => {
           <h1 className="text-2xl font-bold mb-4 md:mb-0">
             Arise, awake and stop not till the goal is reached.
           </h1>
-          <Button onClick={() => setShowAddGoal(true)} children={undefined}>
-            Add New Goal
-          </Button>
+          <Button onClick={() => setShowAddGoal(true)}>Add New Goal</Button>
         </div>
 
-        <Dialog open={showAddGoal} children={undefined}>
-          <DialogContent
-            className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]"
-            children={undefined}
-          >
+        <Dialog open={showAddGoal}>
+          <DialogContent className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]">
             <div className="flex flex-row gap-4 mb-4">
               <Input
                 placeholder="Goal Name"
@@ -325,16 +354,12 @@ const GoalManagementApp = () => {
                         e.key === "Enter" && handleAddSubgoal()
                       }
                     />
-                    <Button
-                      size="sm"
-                      onClick={handleAddSubgoal}
-                      children={undefined}
-                    >
+                    <Button size="sm" onClick={handleAddSubgoal}>
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
                   <div className="mt-2 space-y-2 max-h-28 overflow-y-auto">
-                    {newGoal.subgoals.map((subgoal, index) => (
+                    {newGoal.subgoals.map((subgoal: Subgoal, index: number) => (
                       <div key={index} className="flex items-center gap-2">
                         <span>{subgoal.name}</span>
                         <button
@@ -371,11 +396,7 @@ const GoalManagementApp = () => {
                       onChange={(e) => setTempHabitFrequency(e.target.value)}
                       onKeyPress={(e) => e.key === "Enter" && handleAddHabit()}
                     />
-                    <Button
-                      size="sm"
-                      onClick={handleAddHabit}
-                      children={undefined}
-                    >
+                    <Button size="sm" onClick={handleAddHabit}>
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
@@ -536,7 +557,6 @@ const GoalManagementApp = () => {
                 <div className="mt-6 flex justify-end">
                   <Button
                     onClick={isEditing ? handleSaveChanges : handleCreateGoal}
-                    children={undefined}
                   >
                     {isEditing ? "Save Changes" : "Create Goal"}
                   </Button>
@@ -546,14 +566,11 @@ const GoalManagementApp = () => {
           </DialogContent>
         </Dialog>
 
-        <Dialog open={showGoalDetails} children={undefined}>
-          <DialogContent
-            className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]"
-            children={undefined}
-          >
-            <DialogHeader children={undefined}>
+        <Dialog open={showGoalDetails}>
+          <DialogContent className="max-w-[90vw] max-h-[90vh] overflow-y-auto md:max-w-[70vw] xl:max-w-[65vw]">
+            <DialogHeader>
               <div className="flex justify-between items-center">
-                <DialogTitle className="text-xl font-bold" children={undefined}>
+                <DialogTitle className="text-xl font-bold">
                   {/* {selectedGoal?.name} */}
                   {selectedGoal?.name.length > 15
                     ? `${selectedGoal?.name.substring(0, 15)}...`
@@ -580,20 +597,20 @@ const GoalManagementApp = () => {
                   <h3 className="font-semibold mb-2 text-left">Subgoals</h3>
                   <div className="max-h-28 overflow-y-auto">
                     {selectedGoal?.subgoals.length ? (
-                      selectedGoal.subgoals.map((subgoal, index) => (
+                      selectedGoal.subgoals.map((subgoal: Subgoal) => (
                         <div
-                          key={index}
+                          key={subgoal.ID}
                           className="flex items-center gap-2 mb-2"
                         >
                           <Checkbox
                             checked={subgoal.completed}
-                            onCheckedChange={(checked: boolean) =>
+                            onCheckedChange={(checked: boolean) => {
                               handleSubgoalCompletion(
                                 selectedGoal.ID,
-                                subgoal.name,
+                                subgoal.ID,
                                 checked
-                              )
-                            }
+                              );
+                            }}
                           />
                           <span>{subgoal.name}</span>
                         </div>
@@ -690,7 +707,7 @@ const GoalManagementApp = () => {
                 </div>
 
                 <div className="mt-6 flex justify-end gap-2">
-                  <Button onClick={handleEditClick} children={undefined}>
+                  <Button onClick={handleEditClick}>
                     <div className="flex items-center justify-center">
                       <Edit2 className="h-4 w-4 mr-2" />
                       Edit Goal
@@ -702,7 +719,6 @@ const GoalManagementApp = () => {
                       setShowGoalDetails(false);
                       // setSelectedGoal(null);
                     }}
-                    children={undefined}
                   >
                     Close
                   </Button>
@@ -713,11 +729,12 @@ const GoalManagementApp = () => {
         </Dialog>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Card children={undefined}>
-            <CardHeader children={undefined}>
-              <CardTitle children={undefined}>Goals in Progress</CardTitle>
+          {/* Goals in progress */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Goals in Progress</CardTitle>
             </CardHeader>
-            <CardContent children={undefined}>
+            <CardContent>
               {goals
                 .filter((g: Goal) => !g.completed)
                 .sort(
@@ -725,7 +742,7 @@ const GoalManagementApp = () => {
                     new Date(a.deadline).getTime() -
                     new Date(b.deadline).getTime()
                 )
-                .map((goal: Goal, index) => (
+                .map((goal: Goal, index: number) => (
                   <div
                     className="flex justify-between items-center mb-2"
                     key={index}
@@ -733,7 +750,7 @@ const GoalManagementApp = () => {
                     <div className="flex items-center gap-2">
                       <Checkbox
                         checked={goal.completed}
-                        onCheckedChange={(checked) =>
+                        onCheckedChange={(checked: boolean) =>
                           handleGoalCompletion(goal.ID, checked)
                         }
                       />
@@ -752,11 +769,12 @@ const GoalManagementApp = () => {
             </CardContent>
           </Card>
 
-          <Card children={undefined}>
-            <CardHeader children={undefined}>
-              <CardTitle children={undefined}>Accomplished Goals</CardTitle>
+          {/* Accomplished Goals */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Accomplished Goals</CardTitle>
             </CardHeader>
-            <CardContent children={undefined}>
+            <CardContent>
               {goals
                 .filter((g: Goal) => g.completed)
                 .sort(

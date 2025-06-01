@@ -22,23 +22,23 @@ function App() {
           />
           <Route
             path="/goals"
-            // element={<ProtectedRoute children={<GoalsPage />} />}
-            element={<GoalPage />}
+            element={<ProtectedRoute children={<GoalPage />} />}
+            // element={<GoalPage />}
           />
           <Route
             path="/settings"
-            // element={<ProtectedRoute children={<SettingsPage />} />}
-            element={<SettingsPage />}
+            element={<ProtectedRoute children={<SettingsPage />} />}
+            // element={<SettingsPage />}
           />
           <Route
             path="/journal"
-            // element={<ProtectedRoute children={<JournalsPage />} />}
-            element={<JournalsPage />}
+            element={<ProtectedRoute children={<JournalsPage />} />}
+            // element={<JournalsPage />}
           />
           <Route
             path="/analysis"
-            // element={<ProtectedRoute children={<JournalsPage />} />}
-            element={<AnalysisPage />}
+            element={<ProtectedRoute children={<AnalysisPage />} />}
+            // element={<AnalysisPage />}
           />
         </Routes>
       </Router>
