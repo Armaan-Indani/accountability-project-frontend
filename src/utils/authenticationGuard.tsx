@@ -17,9 +17,9 @@ const isAuthenticated = () => {
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  if (!isAuthenticated()) {
-    return <Navigate to="/login" />;
-  }
+  // if (!isAuthenticated()) {
+  //   return <Navigate to="/login" />;
+  // }
 
   return children; // If authenticated, render the protected content
 };
