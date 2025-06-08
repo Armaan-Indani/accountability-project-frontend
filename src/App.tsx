@@ -1,13 +1,13 @@
 import React from "react";
 import "./App.css";
-import HomePage from "./pages/homepage.tsx";
+import HomePage from "./pages/homepage";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AuthPage from "./pages/authpage.tsx";
-import ProtectedRoute from "./utils/authenticationGuard.tsx";
-import SettingsPage from "./pages/settingspage.tsx";
-import JournalsPage from "./pages/journalspage.tsx";
-import AnalysisPage from "./pages/analysispage.tsx";
-import GoalPage from "./pages/goalpage.tsx";
+import AuthPage from "./pages/authpage";
+import ProtectedRoute from "./utils/authenticationGuard";
+import SettingsPage from "./pages/settingspage";
+import JournalsPage from "./pages/journalspage";
+import AnalysisPage from "./pages/analysispage";
+import GoalPage from "./pages/goalpage";
 
 function App() {
   return (

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Save, Edit2, Calendar } from "lucide-react";
-import NavBar from "../components/NavBar.tsx";
+import NavBar from "../components/NavBar";
 
 export default function ReflectionPagePreview() {
   const [criticalAnalysis, setCriticalAnalysis] = useState("");

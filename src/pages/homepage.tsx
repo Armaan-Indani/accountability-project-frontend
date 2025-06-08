@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import TodoList from "../components/TodoList.tsx";
-import QuoteSection from "../components/QuoteSection.tsx";
-import NavBar from "../components/NavBar.tsx";
-// import Calendar from "../components/Calendar.tsx";
+import TodoList from "../components/TodoList";
+import QuoteSection from "../components/QuoteSection";
+import NavBar from "../components/NavBar";
+// import Calendar from "../components/Calendar";
 
 const HomePage = () => {
   const location = useLocation();

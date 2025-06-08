@@ -12,7 +12,7 @@ export default function AuthPage() {
   const [username, setUsername] = useState("");
   const [occupation, setOccupation] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle authentication logic here
 
@@ -59,20 +59,29 @@ export default function AuthPage() {
         console.error("Unexpected response:", response);
       }
     } catch (error) {
-      if (error.response) {
-        console.error(
-          "Error:",
-          error.response.data.message || error.response.data
-        );
-        window.alert(
-          `Error: ${error.response.data.message || "An error occurred"}`
-        );
-      } else if (error.request) {
-        console.error("No response from the backend:", error.request);
-        window.alert("Error: No response from the backend. Please try again.");
+      // Use type assertion to access error properties safely
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error(
+            "Error:",
+            error.response.data?.message || error.response.data
+          );
+          window.alert(
+            `Error: ${error.response.data?.message || "An error occurred"}`
+          );
+        } else if (error.request) {
+          console.error("No response from the backend:", error.request);
+          window.alert(
+            "Error: No response from the backend. Please try again."
+          );
+        } else {
+          console.error("Error setting up the request:", error.message);
+          window.alert(`Error: ${error.message}`);
+        }
       } else {
-        console.error("Error setting up the request:", error.message);
-        window.alert(`Error: ${error.message}`);
+        // Handle non-Axios errors
+        console.error("Unexpected error:", error);
+        window.alert("An unexpected error occurred.");
       }
     }
 

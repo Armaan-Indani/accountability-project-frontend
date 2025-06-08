@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import { X, Clock, AlignLeft } from "lucide-react";
 
-const Modal = ({ isOpen, onClose, children }) => {
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}
+
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   useEffect(() => {
-    const handleEscape = (e) => {
+    const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
       }
@@ -42,9 +48,15 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const Calendar = () => {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState({});
+  type Event = {
+    id: number;
+    title: string;
+    time: string;
+    description: string;
+  };
+  const [events, setEvents] = useState<Record<string, Event[]>>({});
   const [isOpen, setIsOpen] = useState(false);
   const [eventForm, setEventForm] = useState({
     title: "",
@@ -67,12 +79,13 @@ const Calendar = () => {
     "December",
   ];
 
-  const getDaysInMonth = (year, month) =>
+  const getDaysInMonth = (year: number, month: number) =>
     new Date(year, month + 1, 0).getDate();
 
-  const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
+  const getFirstDayOfMonth = (year: number, month: number) =>
+    new Date(year, month, 1).getDay();
 
-  const handleDateClick = (day) => {
+  const handleDateClick = (day: number) => {
     const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${day}`;
     setSelectedDate(dateKey);
     setEventForm({
@@ -99,7 +112,7 @@ const Calendar = () => {
     }
   };
 
-  const handleDeleteEvent = (dateKey, eventId) => {
+  const handleDeleteEvent = (dateKey: string, eventId: number) => {
     setEvents((prev) => ({
       ...prev,
       [dateKey]: prev[dateKey].filter((event) => event.id !== eventId),
@@ -240,7 +253,7 @@ const Calendar = () => {
         ))}
       </div>
 
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} children={undefined}>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <h2 className="text-lg font-semibold mb-4">Add Event</h2>
         <div className="space-y-4">
           <div>

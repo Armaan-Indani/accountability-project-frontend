@@ -1,5 +1,5 @@
 import React from "react";
-import DeleteIcon from "./DeleteIcon.tsx";
+import DeleteIcon from "./DeleteIcon";
 
 type TaskProps = {
   listId: string;
@@ -64,8 +64,12 @@ const Task: React.FC<TaskProps> = ({
           }
           onKeyDown={(e) =>
             e.key === "Enter" &&
-            (e.target.value.trim() !== ""
-              ? updateItem(listId, item.id, e.target.value)
+            ((e.target as HTMLInputElement).value.trim() !== ""
+              ? updateItem(
+                  listId,
+                  item.id,
+                  (e.target as HTMLInputElement).value
+                )
               : deleteItem(listId, item.id))
           }
         />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import DeleteIcon from "./DeleteIcon.tsx";
-import CrossIcon from "./CrossIcon.tsx";
+import DeleteIcon from "./DeleteIcon";
+import CrossIcon from "./CrossIcon";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -162,7 +162,11 @@ const TodoList = () => {
         console.error("Error adding task:", response.data.message);
       }
     } catch (error) {
-      console.error("Error adding task:", error.message || error);
+      if (error instanceof Error) {
+        console.error("Error adding task:", error.message);
+      } else {
+        console.error("Error adding task:", error);
+      }
     }
   };
 
@@ -205,7 +209,11 @@ const TodoList = () => {
         console.error("Error updating task:", response.data.message);
       }
     } catch (error) {
-      console.error("Error updating task:", error.message || error);
+      if (error instanceof Error) {
+        console.error("Error updating task:", error.message);
+      } else {
+        console.error("Error updating task:", error);
+      }
     }
   };
 
@@ -236,7 +244,11 @@ const TodoList = () => {
         console.error("Error deleting task:", response.data.message);
       }
     } catch (error) {
-      console.error("Error deleting task:", error.message || error);
+      if (error instanceof Error) {
+        console.error("Error deleting task:", error.message);
+      } else {
+        console.error("Error deleting task:", error);
+      }
     }
   };
 
@@ -280,7 +292,11 @@ const TodoList = () => {
         console.error("Error toggling task status:", response.data.message);
       }
     } catch (error) {
-      console.error("Error toggling task status:", error.message || error);
+      if (error instanceof Error) {
+        console.error("Error toggling task status:", error.message);
+      } else {
+        console.error("Error toggling task status:", error);
+      }
     }
   };
 
@@ -366,8 +382,12 @@ const TodoList = () => {
                       }
                       onKeyDown={(e) =>
                         e.key === "Enter" &&
-                        (e.target.value.trim() !== ""
-                          ? updateItem(list.id, item.id, e.target.value)
+                        ((e.target as HTMLInputElement).value.trim() !== ""
+                          ? updateItem(
+                              list.id,
+                              item.id,
+                              (e.target as HTMLInputElement).value
+                            )
                           : deleteItem(list.id, item.id))
                       }
                     />

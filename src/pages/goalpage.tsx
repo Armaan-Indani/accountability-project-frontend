@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Plus, Edit2 } from "lucide-react";
-import NavBar from "../components/NavBar.tsx";
+import NavBar from "../components/NavBar";
 import axios from "axios";
 import {
   Card,
@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose,
-} from "../components/UIComponents.tsx";
+} from "../components/UIComponents";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -81,7 +81,6 @@ const GoalManagementApp = () => {
       resources: "",
       alignment: "",
       completed: false,
-      subgoalProgress: {},
     });
   };
 
@@ -143,7 +142,7 @@ const GoalManagementApp = () => {
         ...newGoal,
         subgoals: [
           ...newGoal.subgoals,
-          { name: tempSubgoal.trim(), completed: false },
+          { ID: -1, name: tempSubgoal.trim(), completed: false },
         ],
       });
       setTempSubgoal("");
@@ -297,7 +296,7 @@ const GoalManagementApp = () => {
         })
       );
       // Also update selectedGoal if it's open
-      setSelectedGoal((goal: Goal) =>
+      setSelectedGoal((goal: Goal | null) =>
         goal && String(goal.ID) === String(goalID)
           ? {
               ...goal,
@@ -572,8 +571,8 @@ const GoalManagementApp = () => {
               <div className="flex justify-between items-center">
                 <DialogTitle className="text-xl font-bold">
                   {/* {selectedGoal?.name} */}
-                  {selectedGoal?.name.length > 15
-                    ? `${selectedGoal?.name.substring(0, 15)}...`
+                  {selectedGoal?.name && selectedGoal.name.length > 15
+                    ? `${selectedGoal.name.substring(0, 15)}...`
                     : selectedGoal?.name}
                 </DialogTitle>
                 <div className="flex items-center gap-2">
@@ -714,7 +713,7 @@ const GoalManagementApp = () => {
                     </div>
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => {
                       setShowGoalDetails(false);
                       // setSelectedGoal(null);

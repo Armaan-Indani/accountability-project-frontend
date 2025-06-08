@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import { Plus, Edit2, Trash2, RotateCcw, X, Check, Trash } from "lucide-react";
-import NavBar from "../components/NavBar.tsx";
+import NavBar from "../components/NavBar";
 
 const JournalsPage = () => {
   const [activeSection, setActiveSection] = useState("my journals");
-  const [journals, setJournals] = useState([]);
-  const [trashBin, setTrashBin] = useState([]);
+  type Journal = {
+    id: number;
+    title: string;
+    content: string;
+    createdAt: string;
+  };
+
+  const [journals, setJournals] = useState<Journal[]>([]);
+  const [trashBin, setTrashBin] = useState<Journal[]>([]);
   const [showNewJournal, setShowNewJournal] = useState(false);
-  const [currentJournal, setCurrentJournal] = useState(null);
+  const [currentJournal, setCurrentJournal] = useState<Journal | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState("");
   const [newJournalData, setNewJournalData] = useState({
@@ -28,17 +35,18 @@ const JournalsPage = () => {
     setNewJournalData({ title: "", content: "" });
   };
 
-  const handleViewJournal = (journal) => {
+  const handleViewJournal = (journal: Journal) => {
     setCurrentJournal({ ...journal });
     setIsEditing(false);
   };
 
-  const handleEditJournal = (journal) => {
+  const handleEditJournal = (journal: Journal) => {
     setCurrentJournal({ ...journal });
     setIsEditing(true);
   };
 
   const handleSaveEdit = () => {
+    if (!currentJournal) return;
     const updatedJournals = journals.map((j) =>
       j.id === currentJournal.id ? currentJournal : j
     );
@@ -47,7 +55,7 @@ const JournalsPage = () => {
     setCurrentJournal(null);
   };
 
-  const handleMoveToTrash = (journal) => {
+  const handleMoveToTrash = (journal: Journal) => {
     const updatedJournals = journals.filter((j) => j.id !== journal.id);
     setJournals(updatedJournals);
     setTrashBin([...trashBin, journal]);
@@ -55,7 +63,7 @@ const JournalsPage = () => {
     setTimeout(() => setShowSuccessMessage(""), 3000);
   };
 
-  const handleRestore = (journal) => {
+  const handleRestore = (journal: Journal) => {
     const updatedTrash = trashBin.filter((j) => j.id !== journal.id);
     setTrashBin(updatedTrash);
     setJournals([...journals, journal]);
@@ -63,7 +71,7 @@ const JournalsPage = () => {
     setTimeout(() => setShowSuccessMessage(""), 3000);
   };
 
-  const handleDeletePermanently = (journal) => {
+  const handleDeletePermanently = (journal: Journal) => {
     const updatedTrash = trashBin.filter((j) => j.id !== journal.id);
     setTrashBin(updatedTrash);
     setShowSuccessMessage(`${journal.title} permanently deleted`);

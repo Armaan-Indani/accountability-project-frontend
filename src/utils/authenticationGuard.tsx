@@ -16,12 +16,14 @@ const isAuthenticated = () => {
 };
 
 // Protected Route Component
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   // if (!isAuthenticated()) {
   //   return <Navigate to="/login" />;
   // }
 
-  return children; // If authenticated, render the protected content
+  return <>{children}</>; // If authenticated, render the protected content
 };
 
 export default ProtectedRoute;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Edit2, Check, X } from "lucide-react";
-import NavBar from "../components/NavBar.tsx";
+import NavBar from "../components/NavBar";
 
 const SettingsPage = () => {
   const [activeSection, setActiveSection] = useState("profile");
