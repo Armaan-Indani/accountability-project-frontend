@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import axios from "axios";
-// const BASE_URL = process.env.BACKEND_URL;
-const BASE_URL = "http://localhost:5000";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,17 +14,15 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle authentication logic here
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
-    const url = `${BASE_URL}${endpoint}`;
-
+    const url = `${BACKEND_URL}${endpoint}`;
+    
     // Set the appropriate endpoint
     const requestData = isLogin
       ? {
           email: email,
           password: password,
-          url,
         }
       : {
           email: email,
@@ -32,7 +30,6 @@ export default function AuthPage() {
           username: username,
           name: name,
           occupation: occupation,
-          url,
         };
 
     try {
